@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4288786633808587389}
   - component: {fileID: 3254350656008735441}
   - component: {fileID: 4352787133748729004}
+  - component: {fileID: 3531700588903023322}
   m_Layer: 0
   m_Name: HeroCharacter
   m_TagString: Untagged
@@ -72,10 +73,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f2772efe3ce4407b927e90194a820f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.HeroController
+  input: {fileID: 3531700588903023322}
   moveSpeed: 7
   rotationSpeed: 15
-  gravity: -9.81
   isometricDirectionMultiplier: {x: 0, y: 0, z: 0}
+--- !u!114 &3531700588903023322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9147725335530501518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 237054d7c0ed4054a6022759f1030b5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Input.HeroInput
 --- !u!1001 &1177630965034158524
 PrefabInstance:
   m_ObjectHideFlags: 0
