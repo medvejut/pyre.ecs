@@ -19,7 +19,8 @@ namespace Pyre.Systems
             var parentLookup = SystemAPI.GetComponentLookup<Parent>(true);
             var ltwLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true);
 
-            foreach (var (transform, entity) in SystemAPI.Query<RefRW<LocalTransform>>()
+            foreach (var (transform, entity) in SystemAPI
+                         .Query<RefRW<LocalTransform>>()
                          .WithAll<Billboard>()
                          .WithEntityAccess())
             {

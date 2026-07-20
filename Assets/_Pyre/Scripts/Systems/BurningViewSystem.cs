@@ -20,20 +20,22 @@ namespace Pyre.Systems
                 .GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach (var (burningView, entity) in SystemAPI.Query<BurningView>().WithEntityAccess())
+            foreach (var (burningView, entity) in SystemAPI
+                         .Query<RefRO<BurningView>>()
+                         .WithEntityAccess())
             {
                 var isBurning = SystemAPI.HasComponent<Burning>(entity);
-                var isRenderEnabled = !SystemAPI.HasComponent<DisableRendering>(burningView.FireEntity);
+                var isRenderEnabled = !SystemAPI.HasComponent<DisableRendering>(burningView.ValueRO.FireEntity);
 
                 if (isBurning != isRenderEnabled)
                 {
                     if (isBurning)
                     {
-                        ecb.RemoveComponent<DisableRendering>(burningView.FireEntity);
+                        ecb.RemoveComponent<DisableRendering>(burningView.ValueRO.FireEntity);
                     }
                     else
                     {
-                        ecb.AddComponent<DisableRendering>(burningView.FireEntity);
+                        ecb.AddComponent<DisableRendering>(burningView.ValueRO.FireEntity);
                     }
                 }
             }

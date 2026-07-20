@@ -1,7 +1,8 @@
 ﻿using Pyre.Components;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
-using Unity.Mathematics;
+using Unity.Physics;
 using Unity.Transforms;
 
 namespace Pyre.Systems
@@ -11,6 +12,7 @@ namespace Pyre.Systems
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         }
 
@@ -21,23 +23,41 @@ namespace Pyre.Systems
                 .GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach (var (fireTransform, burning) in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<Burning>>())
+            var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
+
+            var ignitableLookup = SystemAPI.GetComponentLookup<Ignitable>(true);
+            var burningLookup = SystemAPI.GetComponentLookup<Burning>(true);
+
+            foreach (var (burningLtw, burning, burningEntity) in SystemAPI
+                         .Query<RefRO<LocalToWorld>, RefRO<Burning>>()
+                         .WithEntityAccess())
             {
-                var burningPosition = fireTransform.ValueRO.Position;
-                var burningRadius = burning.ValueRO.HeatRadius;
+                var hits = new NativeList<DistanceHit>(Allocator.Temp);
 
-                foreach (var (ignitableTransform, ignitable, entity) in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<Ignitable>>()
-                             .WithNone<Burning>()
-                             .WithEntityAccess())
+                var input = new PointDistanceInput
                 {
-                    var ignitablePosition = ignitableTransform.ValueRO.Position;
-                    var distance = math.distance(burningPosition, ignitablePosition);
+                    Position = burningLtw.ValueRO.Position,
+                    MaxDistance = burning.ValueRO.HeatRadius,
+                    Filter = CollisionFilter.Default
+                };
 
-                    if (distance < burningRadius)
+                if (physicsWorld.CollisionWorld.CalculateDistance(input, ref hits))
+                {
+                    foreach (var hit in hits)
                     {
-                        ecb.AddComponent(entity, new Burning { HeatRadius = ignitable.ValueRO.BurningRadius });
+                        if (hit.Entity == burningEntity)
+                        {
+                            continue;
+                        }
+
+                        if (ignitableLookup.TryGetComponent(hit.Entity, out var ignitable) && !burningLookup.HasComponent(hit.Entity))
+                        {
+                            ecb.AddComponent(hit.Entity, new Burning { HeatRadius = ignitable.BurningRadius });
+                        }
                     }
                 }
+
+                hits.Dispose();
             }
         }
 

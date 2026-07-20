@@ -25,14 +25,15 @@ namespace Pyre.Systems
 
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
 
-            foreach (var (burningTransform, burning, entity) in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<Burning>>()
+            foreach (var (burningLtw, burning, entity) in SystemAPI
+                         .Query<RefRO<LocalToWorld>, RefRO<Burning>>()
                          .WithEntityAccess())
             {
                 var hits = new NativeList<DistanceHit>(Allocator.Temp);
 
                 var input = new PointDistanceInput
                 {
-                    Position = burningTransform.ValueRO.Position,
+                    Position = burningLtw.ValueRO.Position,
                     MaxDistance = 0f,
                     Filter = CollisionFilter.Default
                 };
