@@ -19,8 +19,10 @@ namespace Pyre.Systems
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
+            var ecb = SystemAPI
+                .GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
+
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
 
             foreach (var (burningTransform, burning, entity) in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<Burning>>()
@@ -31,7 +33,7 @@ namespace Pyre.Systems
                 var input = new PointDistanceInput
                 {
                     Position = burningTransform.ValueRO.Position,
-                    MaxDistance = burning.ValueRO.HeatRadius,
+                    MaxDistance = 0f,
                     Filter = CollisionFilter.Default
                 };
 

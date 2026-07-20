@@ -17,21 +17,23 @@ namespace Pyre.Systems
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var ecb = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
+            var ecb = SystemAPI
+                .GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
             foreach (var (fireTransform, burning) in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<Burning>>())
             {
-                var firePosition = fireTransform.ValueRO.Position;
-                var radius = burning.ValueRO.HeatRadius;
+                var burningPosition = fireTransform.ValueRO.Position;
+                var burningRadius = burning.ValueRO.HeatRadius;
 
                 foreach (var (ignitableTransform, ignitable, entity) in SystemAPI.Query<RefRO<LocalToWorld>, RefRO<Ignitable>>()
                              .WithNone<Burning>()
                              .WithEntityAccess())
                 {
-                    var distance = math.distance(firePosition, ignitableTransform.ValueRO.Position);
+                    var ignitablePosition = ignitableTransform.ValueRO.Position;
+                    var distance = math.distance(burningPosition, ignitablePosition);
 
-                    if (distance < radius)
+                    if (distance < burningRadius)
                     {
                         ecb.AddComponent(entity, new Burning { HeatRadius = ignitable.ValueRO.BurningRadius });
                     }
