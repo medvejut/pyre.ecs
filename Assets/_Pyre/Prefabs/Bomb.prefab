@@ -188,6 +188,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2025996248525562530}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5939108989042684116}
   m_SourcePrefab: {fileID: 100100000, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
 --- !u!1 &4728465506310586097 stripped
 GameObject:
@@ -270,6 +273,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.ExplosiveAuthoring
   ExplodeOnStartBurn: 1
   Delay: 3
+  ExplosionRadius: 5
+--- !u!114 &5939108989042684116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4728465506310586097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b09f5ffa5aa24691a92fa4bf81910623, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.DestructibleAuthoring
 --- !u!4 &5392272203115144267 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}

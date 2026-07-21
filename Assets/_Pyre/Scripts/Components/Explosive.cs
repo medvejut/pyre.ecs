@@ -6,5 +6,7 @@ namespace Pyre.Components
     {
         public bool ExplodeOnStartBurn;
         public float Delay;
+
+        public float ExplosionRadius;
     }
 }

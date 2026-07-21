@@ -1,6 +1,7 @@
 ﻿using Pyre.Components;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Transforms;
 
 namespace Pyre.Systems
 {
@@ -41,15 +42,22 @@ namespace Pyre.Systems
         {
             var deltaTime = SystemAPI.Time.DeltaTime;
 
-            foreach (var (explodeTimer, entity) in
-                     SystemAPI.Query<RefRW<ExplodeTimer>>()
+            foreach (var (explodeTimer, explosive, ltw, entity) in
+                     SystemAPI.Query<RefRW<ExplodeTimer>, RefRO<Explosive>, RefRO<LocalToWorld>>()
                          .WithEntityAccess())
             {
                 explodeTimer.ValueRW.TimeRemaining -= deltaTime;
 
                 if (explodeTimer.ValueRO.TimeRemaining <= 0f)
                 {
-                    ecb.AddComponent<DestroyRequested>(entity);
+                    var explosionEntity = ecb.CreateEntity();
+                    ecb.AddComponent(explosionEntity, new Explosion
+                    {
+                        Position = ltw.ValueRO.Position,
+                        Radius = explosive.ValueRO.ExplosionRadius
+                    });
+
+                    ecb.RemoveComponent<ExplodeTimer>(entity);
                 }
             }
         }
