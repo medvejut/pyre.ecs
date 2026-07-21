@@ -15,7 +15,6 @@ namespace Pyre.Systems
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            
             foreach (var monoPlayerTransform in SystemAPI.Query<RefRO<LocalTransform>>().WithAll<MonoPlayerTag>())
             {
                 foreach (var playerTransform in SystemAPI.Query<RefRW<LocalTransform>>().WithAll<PlayerTag>())

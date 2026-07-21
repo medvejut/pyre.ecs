@@ -1,8 +1,7 @@
-﻿using Pyre.Components;
-using Unity.Entities;
+﻿using Unity.Entities;
 using UnityEngine;
 
-namespace Pyre.Authoring
+namespace Pyre.Components
 {
     public class IgnitableAuthoring : MonoBehaviour
     {

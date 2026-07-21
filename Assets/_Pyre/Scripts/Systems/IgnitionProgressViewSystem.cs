@@ -24,12 +24,12 @@ namespace Pyre.Systems
                          .Query<RefRO<IgnitionProgressView>, RefRO<Ignitable>, RefRO<IgnitionProgress>>()
                          .WithEntityAccess())
             {
-                var isInProgress = ignitionProgress.ValueRO.Elapsed > 0 && !SystemAPI.HasComponent<Burning>(entity);
+                var shouldRender = ignitionProgress.ValueRO.Elapsed > 0 && !SystemAPI.HasComponent<Burning>(entity);
                 var isRenderEnabled = !SystemAPI.HasComponent<DisableRendering>(view.ValueRO.ProgressEntity);
 
-                if (isInProgress != isRenderEnabled)
+                if (shouldRender != isRenderEnabled)
                 {
-                    if (isInProgress)
+                    if (shouldRender)
                     {
                         ecb.RemoveComponent<DisableRendering>(view.ValueRO.ProgressEntity);
                     }

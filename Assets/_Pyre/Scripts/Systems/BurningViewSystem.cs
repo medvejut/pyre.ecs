@@ -24,19 +24,21 @@ namespace Pyre.Systems
                          .Query<RefRO<BurningView>>()
                          .WithEntityAccess())
             {
-                var isBurning = SystemAPI.HasComponent<Burning>(entity);
+                var shouldRender = SystemAPI.HasComponent<Burning>(entity);
                 var isRenderEnabled = !SystemAPI.HasComponent<DisableRendering>(burningView.ValueRO.FireEntity);
 
-                if (isBurning != isRenderEnabled)
+                if (shouldRender == isRenderEnabled)
                 {
-                    if (isBurning)
-                    {
-                        ecb.RemoveComponent<DisableRendering>(burningView.ValueRO.FireEntity);
-                    }
-                    else
-                    {
-                        ecb.AddComponent<DisableRendering>(burningView.ValueRO.FireEntity);
-                    }
+                    continue;
+                }
+
+                if (shouldRender)
+                {
+                    ecb.RemoveComponent<DisableRendering>(burningView.ValueRO.FireEntity);
+                }
+                else
+                {
+                    ecb.AddComponent<DisableRendering>(burningView.ValueRO.FireEntity);
                 }
             }
         }
