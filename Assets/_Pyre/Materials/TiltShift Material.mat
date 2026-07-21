@@ -25,8 +25,8 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _FocusFader: 0.4
-    - _FocusRange: 0.4
+    - _FocusFader: 0.5
+    - _FocusRange: 0.3
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
