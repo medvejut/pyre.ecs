@@ -383,6 +383,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Authoring.IgnitableAuthoring
   burningRadius: 2
+  ignitionTime: 0.2
+  coolingRate: 0.2
 --- !u!1001 &1484262055
 PrefabInstance:
   m_ObjectHideFlags: 0

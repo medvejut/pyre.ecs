@@ -153,7 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 821dea4858dc4011a40b769b483835cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Authoring.IgnitableAuthoring
-  burningRadius: 3
+  burningRadius: 1.7
+  ignitionTime: 1
+  coolingRate: 0.2
 --- !u!114 &6685625062363387980
 MonoBehaviour:
   m_ObjectHideFlags: 0

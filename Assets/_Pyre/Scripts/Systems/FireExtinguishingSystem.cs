@@ -45,6 +45,12 @@ namespace Pyre.Systems
                         if (SystemAPI.HasComponent<Water>(hit.Entity))
                         {
                             ecb.RemoveComponent<Burning>(entity);
+
+                            if (SystemAPI.HasComponent<IgnitionProgress>(entity))
+                            {
+                                ecb.SetComponent(entity, new IgnitionProgress { Elapsed = 0f });
+                            }
+
                             break;
                         }
                     }
