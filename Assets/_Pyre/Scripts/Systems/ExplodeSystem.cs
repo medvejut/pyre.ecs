@@ -55,10 +55,9 @@ namespace Pyre.Systems
 
                     ecb.AddComponent(explosionEntity, new Explosion
                     {
-                        Position = ltw.ValueRO.Position,
+                        Position = ltw.ValueRO.Position + explosive.ValueRO.ExplosionOffset,
                         Radius = explosive.ValueRO.ExplosionRadius,
-
-                        Impulse = explosive.ValueRO.CustomExplosionImpulse,
+                        Impulse = explosive.ValueRO.ExplosionImpulse,
                         AngularImpulse = CalculateExplosionAngularImpulse(explosive),
                     });
 

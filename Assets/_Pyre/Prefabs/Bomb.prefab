@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 821dea4858dc4011a40b769b483835cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Authoring.IgnitableAuthoring
-  burningRadius: 1
+  burningRadius: 0
   ignitionTime: 1
   coolingRate: 0.5
 --- !u!114 &7682216173049835053
@@ -345,10 +345,11 @@ MonoBehaviour:
   ExplodeOnStartBurn: 1
   Delay: 3
   ExplosionRadius: 5
-  CustomExplosionImpulse:
-    x: 10
-    y: 20
-    z: -10
+  ExplosionImpulse: 25
+  ExplosionOffset:
+    x: 0
+    y: 0
+    z: 0
   CustomExplosionAngularImpulseMultiplier: 5
   CustomExplosionAngularImpulseRandomSeed: 6
 --- !u!114 &5939108989042684116

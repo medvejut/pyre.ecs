@@ -8,7 +8,7 @@ namespace Pyre.Components
         public float3 Position;
         public float Radius;
 
-        public float3 Impulse;
+        public float Impulse;
         public float3 AngularImpulse;
     }
 }

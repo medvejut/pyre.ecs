@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -8,10 +9,20 @@ namespace Pyre.Components
     {
         public bool ExplodeOnStartBurn = true;
         public float Delay = 3f;
+        [Space]
         public float ExplosionRadius = 3f;
-        public float3 CustomExplosionImpulse = new(10f, 20f, 10f);
+        public float ExplosionImpulse = 10f;
+        public float3 ExplosionOffset;
+        [Space]
         public float CustomExplosionAngularImpulseMultiplier = 5f;
         public uint CustomExplosionAngularImpulseRandomSeed = 2;
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(transform.position + (Vector3)ExplosionOffset, 0.1f);
+            Gizmos.DrawWireSphere(transform.position + (Vector3)ExplosionOffset, ExplosionRadius);
+        }
 
         public class ExplosiveBaker : Baker<ExplosiveAuthoring>
         {
@@ -23,9 +34,10 @@ namespace Pyre.Components
                     ExplodeOnStartBurn = authoring.ExplodeOnStartBurn,
                     Delay = authoring.Delay,
                     ExplosionRadius = authoring.ExplosionRadius,
-                    CustomExplosionImpulse = authoring.CustomExplosionImpulse,
                     CustomExplosionAngularImpulseMultiplier = authoring.CustomExplosionAngularImpulseMultiplier,
-                    CustomExplosionAngularImpulseRandomSeed = authoring.CustomExplosionAngularImpulseRandomSeed
+                    CustomExplosionAngularImpulseRandomSeed = authoring.CustomExplosionAngularImpulseRandomSeed,
+                    ExplosionImpulse = authoring.ExplosionImpulse,
+                    ExplosionOffset = authoring.ExplosionOffset
                 });
             }
         }

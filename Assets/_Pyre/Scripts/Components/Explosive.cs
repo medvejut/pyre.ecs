@@ -9,8 +9,9 @@ namespace Pyre.Components
         public float Delay;
 
         public float ExplosionRadius;
+        public float ExplosionImpulse;
+        public float3 ExplosionOffset;
 
-        public float3 CustomExplosionImpulse;
         public float CustomExplosionAngularImpulseMultiplier;
         public uint CustomExplosionAngularImpulseRandomSeed;
     }
