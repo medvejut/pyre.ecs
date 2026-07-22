@@ -26,6 +26,7 @@ namespace Pyre.Components
                         math.radians(authoring.isometricDirectionMultiplier.y),
                         math.radians(authoring.isometricDirectionMultiplier.z))
                 });
+                AddComponent<KnockbackVelocity>(entity);
             }
         }
     }

@@ -21,7 +21,8 @@ namespace Pyre.Components
         {
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(transform.position + (Vector3)ExplosionOffset, 0.1f);
-            Gizmos.DrawWireSphere(transform.position + (Vector3)ExplosionOffset, ExplosionRadius);
+            Gizmos.color = new Color(1f, 0f, 0f, 0.05f);
+            Gizmos.DrawSphere(transform.position + (Vector3)ExplosionOffset, ExplosionRadius);
         }
 
         public class ExplosiveBaker : Baker<ExplosiveAuthoring>

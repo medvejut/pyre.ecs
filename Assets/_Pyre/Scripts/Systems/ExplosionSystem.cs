@@ -31,6 +31,7 @@ namespace Pyre.Systems
             var velocityLookup = SystemAPI.GetComponentLookup<PhysicsVelocity>();
             var massLookup = SystemAPI.GetComponentLookup<PhysicsMass>(true);
             var ltwLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true);
+            var knockbackVelocityLookup = SystemAPI.GetComponentLookup<KnockbackVelocity>();
 
             foreach (var (explosion, entity) in SystemAPI
                          .Query<RefRO<Explosion>>()
@@ -42,7 +43,7 @@ namespace Pyre.Systems
                     foreach (var hit in hits)
                     {
                         DestroyHitEntity(hit.Entity, destructibleLookup, destroyRequestedLookup, ecb);
-                        TryKickBody(hit.Entity, explosion.ValueRO, velocityLookup, massLookup, ltwLookup);
+                        TryKickBody(hit.Entity, explosion.ValueRO, velocityLookup, massLookup, ltwLookup, knockbackVelocityLookup);
                     }
                 }
 
@@ -60,21 +61,30 @@ namespace Pyre.Systems
             }
         }
 
-        private static void TryKickBody(Entity hitEntity, Explosion explosion, ComponentLookup<PhysicsVelocity> velocityLookup, ComponentLookup<PhysicsMass> massLookup, ComponentLookup<LocalToWorld> ltwLookup)
+        private static void TryKickBody(Entity hitEntity, Explosion explosion, ComponentLookup<PhysicsVelocity> velocityLookup, ComponentLookup<PhysicsMass> massLookup, ComponentLookup<LocalToWorld> ltwLookup, ComponentLookup<KnockbackVelocity> knockbackVelocityLookup)
         {
-            if (velocityLookup.HasComponent(hitEntity) && massLookup.HasComponent(hitEntity) && ltwLookup.HasComponent(hitEntity))
+            if (!velocityLookup.HasComponent(hitEntity) || !massLookup.HasComponent(hitEntity) || !ltwLookup.HasComponent(hitEntity))
+                return;
+
+            var velocity = velocityLookup.GetRefRW(hitEntity);
+            var mass = massLookup[hitEntity];
+            var ltw = ltwLookup[hitEntity];
+
+            var position = ltw.Position;
+            var direction = math.normalizesafe(position - explosion.Position);
+
+            var distance = math.distance(position, explosion.Position);
+            var t = math.saturate(1f - distance / explosion.Radius);
+            var impulse = explosion.Impulse * t;
+
+            if (knockbackVelocityLookup.HasComponent(hitEntity))
             {
-                var velocity = velocityLookup.GetRefRW(hitEntity);
-                var mass = massLookup[hitEntity];
-                var ltw = ltwLookup[hitEntity];
-
-                var position = ltw.Position;
-                var direction = math.normalizesafe(position - explosion.Position);
-
-                var distance = math.distance(position, explosion.Position);
-                var t = math.saturate(1f - distance / explosion.Radius);
-                var impulse = explosion.Impulse * t;
-
+                var knockbackVelocity = knockbackVelocityLookup.GetRefRW(hitEntity);
+                knockbackVelocity.ValueRW.Linear += direction * impulse;
+                knockbackVelocity.ValueRW.Angular += explosion.AngularImpulse;
+            }
+            else
+            {
                 velocity.ValueRW.ApplyLinearImpulse(mass, direction * impulse);
                 velocity.ValueRW.ApplyAngularImpulse(mass, explosion.AngularImpulse);
             }
