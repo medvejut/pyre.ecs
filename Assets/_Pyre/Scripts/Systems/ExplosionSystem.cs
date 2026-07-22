@@ -40,7 +40,7 @@ namespace Pyre.Systems
                     foreach (var hit in hits)
                     {
                         DestroyHitEntity(hit.Entity, destructibleLookup, destroyRequestedLookup, ecb);
-                        TryKickBodyUp(hit.Entity, explosion.ValueRO, velocityLookup, massLookup);
+                        TryKickBody(hit.Entity, explosion.ValueRO, velocityLookup, massLookup);
                     }
                 }
 
@@ -58,7 +58,7 @@ namespace Pyre.Systems
             }
         }
 
-        private static void TryKickBodyUp(Entity hitEntity, Explosion explosion, ComponentLookup<PhysicsVelocity> velocityLookup, ComponentLookup<PhysicsMass> massLookup)
+        private static void TryKickBody(Entity hitEntity, Explosion explosion, ComponentLookup<PhysicsVelocity> velocityLookup, ComponentLookup<PhysicsMass> massLookup)
         {
             if (velocityLookup.HasComponent(hitEntity) && massLookup.HasComponent(hitEntity))
             {
