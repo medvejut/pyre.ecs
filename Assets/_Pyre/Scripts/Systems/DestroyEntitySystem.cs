@@ -18,22 +18,29 @@ namespace Pyre.Systems
             var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach (var burningView in
-                     SystemAPI.Query<RefRO<BurningView>>()
+            foreach (var burningView in SystemAPI
+                         .Query<RefRO<BurningView>>()
                          .WithAll<DestroyRequested>())
             {
                 ecb.DestroyEntity(burningView.ValueRO.FireEntity);
             }
 
-            foreach (var ignitionProgressView in
-                     SystemAPI.Query<RefRO<IgnitionProgressView>>()
+            foreach (var ignitionProgressView in SystemAPI
+                         .Query<RefRO<IgnitionProgressView>>()
                          .WithAll<DestroyRequested>())
             {
                 ecb.DestroyEntity(ignitionProgressView.ValueRO.ProgressEntity);
             }
 
-            foreach (var (_, entity) in
-                     SystemAPI.Query<RefRO<DestroyRequested>>()
+            foreach (var explodeTimerView in SystemAPI
+                         .Query<RefRO<ExplodeTimerView>>()
+                         .WithAll<DestroyRequested>())
+            {
+                ecb.DestroyEntity(explodeTimerView.ValueRO.ProgressEntity);
+            }
+
+            foreach (var (_, entity) in SystemAPI
+                         .Query<RefRO<DestroyRequested>>()
                          .WithEntityAccess())
             {
                 ecb.DestroyEntity(entity);
