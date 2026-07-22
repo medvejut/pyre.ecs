@@ -167,7 +167,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3923431594767700871}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 10
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -426,7 +426,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fa4c69675a23d2d4a8d72f89dfd35bbd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.25
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fa4c69675a23d2d4a8d72f89dfd35bbd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -478,7 +478,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fa4c69675a23d2d4a8d72f89dfd35bbd, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5439721763733979599}
+      addedObject: {fileID: 8058984865139607492}
   m_SourcePrefab: {fileID: 100100000, guid: fa4c69675a23d2d4a8d72f89dfd35bbd, type: 3}
 --- !u!4 &7470492943996275466 stripped
 Transform:
@@ -490,7 +490,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fa4c69675a23d2d4a8d72f89dfd35bbd, type: 3}
   m_PrefabInstance: {fileID: 6928291863250644193}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5439721763733979599
+--- !u!114 &8058984865139607492
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -499,7 +499,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 7847334798418088368}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84298a5eff754068b2b94ddeda3c7884, type: 3}
+  m_Script: {fileID: 11500000, guid: d9fab14775a54c5aa4911517feda8818, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Pyre.InverseRotation
-  target: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.FreezeWorldRotationAuthoring

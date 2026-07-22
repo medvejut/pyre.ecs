@@ -1,28 +1,22 @@
 ﻿using Pyre.Components;
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Pyre.Systems
 {
     [UpdateInGroup(typeof(TransformSystemGroup), OrderFirst = true)]
-    public partial struct BillboardSystem : ISystem
+    public partial struct FreezeRotationSystem : ISystem
     {
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var camera = Camera.main;
-            if (camera == null)
-                return;
-
-            quaternion cameraRotation = camera.transform.rotation;
-
             var parentLookup = SystemAPI.GetComponentLookup<Parent>(true);
-            var ltwLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true);
+            var ltwLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
 
-            foreach (var (transform, entity) in SystemAPI
-                         .Query<RefRW<LocalTransform>>()
-                         .WithAll<Billboard>()
+            foreach (var (freezeRotation, transform, entity) in SystemAPI
+                         .Query<RefRO<FreezeWorldRotation>, RefRW<LocalTransform>>()
                          .WithEntityAccess())
             {
                 var parentWorldRotation = quaternion.identity;
@@ -32,7 +26,7 @@ namespace Pyre.Systems
                     parentWorldRotation = parentLtw.Rotation;
                 }
 
-                transform.ValueRW.Rotation = math.mul(math.inverse(parentWorldRotation), cameraRotation);
+                transform.ValueRW.Rotation = math.mul(math.inverse(parentWorldRotation), freezeRotation.ValueRO.WorldRotation);
             }
         }
     }

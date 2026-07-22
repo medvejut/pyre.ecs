@@ -52,7 +52,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AddPrecomputedVelocity: 0
-    - _Alpha: 0.7
+    - _Alpha: 0.9
     - _AlphaCutoffEnable: 0
     - _AlphaDstBlend: 10
     - _AlphaSrcBlend: 1
@@ -81,7 +81,7 @@ Material:
     - _RefractionModel: 0
     - _RenderQueueType: 4
     - _RequireSplitLighting: 0
-    - _Saturation: 0.5
+    - _Saturation: 0.8
     - _SrcBlend: 1
     - _StencilRef: 0
     - _StencilRefDepth: 0
