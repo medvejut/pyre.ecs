@@ -345,6 +345,12 @@ MonoBehaviour:
   ExplodeOnStartBurn: 1
   Delay: 3
   ExplosionRadius: 5
+  CustomExplosionImpulse:
+    x: 10
+    y: 20
+    z: -10
+  CustomExplosionAngularImpulseMultiplier: 5
+  CustomExplosionAngularImpulseRandomSeed: 6
 --- !u!114 &5939108989042684116
 MonoBehaviour:
   m_ObjectHideFlags: 0

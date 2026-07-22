@@ -1,6 +1,7 @@
 ﻿using Pyre.Components;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 
 namespace Pyre.Systems
@@ -51,15 +52,25 @@ namespace Pyre.Systems
                 if (explodeTimer.ValueRO.TimeRemaining <= 0f)
                 {
                     var explosionEntity = ecb.CreateEntity();
+
                     ecb.AddComponent(explosionEntity, new Explosion
                     {
                         Position = ltw.ValueRO.Position,
-                        Radius = explosive.ValueRO.ExplosionRadius
+                        Radius = explosive.ValueRO.ExplosionRadius,
+
+                        Impulse = explosive.ValueRO.CustomExplosionImpulse,
+                        AngularImpulse = CalculateExplosionAngularImpulse(explosive),
                     });
 
                     ecb.RemoveComponent<ExplodeTimer>(entity);
                 }
             }
+        }
+
+        private static float3 CalculateExplosionAngularImpulse(RefRO<Explosive> explosive)
+        {
+            var random = Random.CreateFromIndex(explosive.ValueRO.CustomExplosionAngularImpulseRandomSeed);
+            return random.NextFloat3Direction() * explosive.ValueRO.CustomExplosionAngularImpulseMultiplier;
         }
 
         [BurstCompile]
