@@ -2,6 +2,7 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Rendering;
+using UnityEngine.VFX;
 
 namespace Pyre.Systems
 {
@@ -13,7 +14,7 @@ namespace Pyre.Systems
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         }
 
-        [BurstCompile]
+        // [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var ecb = SystemAPI
@@ -39,6 +40,20 @@ namespace Pyre.Systems
                 else
                 {
                     ecb.AddComponent<DisableRendering>(burningView.ValueRO.FireEntity);
+                }
+
+                if (SystemAPI.ManagedAPI.TryGetComponent(burningView.ValueRO.FireEntity, out VisualEffect vfx))
+                {
+                    if (shouldRender)
+                    {
+                        vfx.Play();
+                        vfx.playRate = 1f;
+                    }
+                    else
+                    {
+                        vfx.Stop();
+                        vfx.playRate = 3f;
+                    }
                 }
             }
         }
