@@ -59,6 +59,7 @@ namespace Pyre.Systems
                     baseRotation = math.mul(quaternion.AxisAngle(math.up(), knockbackAngular.y * deltaTime), baseRotation);
                 }
 
+                baseRotation.value.xz = 0;
                 localTransform.ValueRW.Rotation = baseRotation;
             }
         }

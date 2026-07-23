@@ -50688,10 +50688,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2025996248525562530, guid: 469179b2430af1743a84bd47503707b4, type: 3}
-      propertyPath: ExplosionRadius
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 2025996248525562530, guid: 469179b2430af1743a84bd47503707b4, type: 3}
       propertyPath: ExplosionOffset.x
       value: -0.2
       objectReference: {fileID: 0}
@@ -51031,10 +51027,6 @@ PrefabInstance:
     - target: {fileID: 3923431594767700871, guid: d5a772f403db6b54ca06c119833541b4, type: 3}
       propertyPath: m_Name
       value: Hero
-      objectReference: {fileID: 0}
-    - target: {fileID: 7503802197810489018, guid: d5a772f403db6b54ca06c119833541b4, type: 3}
-      propertyPath: m_Mass
-      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -344,7 +344,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.ExplosiveAuthoring
   ExplodeOnStartBurn: 1
   Delay: 3
-  ExplosionRadius: 5
+  ExplosionRadius: 8
   ExplosionImpulse: 25
   ExplosionOffset:
     x: 0
