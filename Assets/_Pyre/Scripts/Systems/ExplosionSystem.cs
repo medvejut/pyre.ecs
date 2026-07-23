@@ -32,6 +32,7 @@ namespace Pyre.Systems
             var massLookup = SystemAPI.GetComponentLookup<PhysicsMass>(true);
             var ltwLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true);
             var knockbackVelocityLookup = SystemAPI.GetComponentLookup<KnockbackVelocity>();
+            var ignitableLookup = SystemAPI.GetComponentLookup<Ignitable>(true);
 
             foreach (var (explosion, entity) in SystemAPI
                          .Query<RefRO<Explosion>>()
@@ -44,6 +45,7 @@ namespace Pyre.Systems
                     {
                         DestroyHitEntity(hit.Entity, destructibleLookup, destroyRequestedLookup, ecb);
                         TryKickBody(hit.Entity, explosion.ValueRO, velocityLookup, massLookup, ltwLookup, knockbackVelocityLookup);
+                        TryBurnEntity(hit.Entity, ignitableLookup, ecb);
                     }
                 }
 
@@ -90,9 +92,12 @@ namespace Pyre.Systems
             }
         }
 
-        [BurstCompile]
-        public void OnDestroy(ref SystemState state)
+        private void TryBurnEntity(Entity hitEntity, ComponentLookup<Ignitable> ignitableLookup, EntityCommandBuffer ecb)
         {
+            if (ignitableLookup.TryGetRefRO(hitEntity, out var ignitable))
+            {
+                ecb.AddComponent(hitEntity, new Burning { HeatRadius = ignitable.ValueRO.BurningRadius });
+            }
         }
     }
 }
