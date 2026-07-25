@@ -172,6 +172,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &722293345
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 722293346}
+  m_Layer: 0
+  m_Name: Camera Gimbal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &722293346
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722293345}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.29038098, y: 0.32528043, z: -0.10569002, w: 0.89370084}
+  m_LocalPosition: {x: -12.720243, y: 18.255123, z: -17.29052}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2023625436}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 36, y: 40, z: 0}
 --- !u!1 &1033533158
 GameObject:
   m_ObjectHideFlags: 0
@@ -590,8 +622,10 @@ GameObject:
   - component: {fileID: 2023625435}
   - component: {fileID: 2023625434}
   - component: {fileID: 2023625437}
+  - component: {fileID: 2023625438}
+  - component: {fileID: 2023625439}
   m_Layer: 0
-  m_Name: Main Camera
+  m_Name: Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -664,13 +698,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2023625433}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.29038098, y: 0.32528043, z: -0.10569002, w: 0.89370084}
-  m_LocalPosition: {x: -12.720243, y: 18.255123, z: -17.29052}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 36, y: 40, z: 0}
+  m_Father: {fileID: 722293346}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2023625437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -810,11 +844,38 @@ MonoBehaviour:
       data1: 0
       data2: 0
   defaultFrameSettings: 0
+--- !u!114 &2023625438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023625433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c472761b049443848a166fb7cc8c15e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Utils.CameraShake
+  defaultDuration: 0.5
+  defaultAmplitude: 1
+--- !u!114 &2023625439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023625433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cb10832f232475d887a2017fef2deb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Cameras.CameraBridge
+  cameraShake: {fileID: 2023625438}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 2023625436}
+  - {fileID: 722293346}
   - {fileID: 1033533160}
   - {fileID: 1993500949}
   - {fileID: 1926979023}

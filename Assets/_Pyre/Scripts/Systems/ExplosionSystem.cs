@@ -1,4 +1,5 @@
-﻿using Pyre.Components;
+﻿using Pyre.Cameras.Components;
+using Pyre.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -25,6 +26,7 @@ namespace Pyre.Systems
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
+            var cameraShakeBuffer = SystemAPI.GetSingletonBuffer<CameraShakeEvent>(isReadOnly: false);
 
             var destructibleLookup = SystemAPI.GetComponentLookup<Destructible>(true);
             var destroyRequestedLookup = SystemAPI.GetComponentLookup<DestroyRequested>(true);
@@ -46,6 +48,7 @@ namespace Pyre.Systems
                         DestroyHitEntity(hit.Entity, destructibleLookup, destroyRequestedLookup, ecb);
                         TryKickBody(hit.Entity, explosion.ValueRO, velocityLookup, massLookup, ltwLookup, knockbackVelocityLookup);
                         TryBurnEntity(hit.Entity, ignitableLookup, ecb);
+                        cameraShakeBuffer.Add(new CameraShakeEvent());
                     }
                 }
 

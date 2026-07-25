@@ -1,4 +1,6 @@
-﻿using Pyre.Components;
+﻿using Pyre.Cameras;
+using Pyre.Cameras.Components;
+using Pyre.Components;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -92,6 +94,12 @@ namespace Pyre.Systems
                         hits.Dispose();
                     }
                 }
+            }
+
+            if (Keyboard.current?.cKey.wasPressedThisFrame == true)
+            {
+                var cameraShakeBuffer = SystemAPI.GetSingletonBuffer<CameraShakeEvent>();
+                cameraShakeBuffer.Add(new CameraShakeEvent());
             }
         }
 
