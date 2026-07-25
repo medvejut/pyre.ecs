@@ -233,6 +233,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5ef0c6ccf4b9f694fb6f39b182ce539e, type: 2}
     - target: {fileID: 919132149155446097, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
       propertyPath: m_Name
       value: bomb
@@ -262,6 +266,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7822609235664011859}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2206829081805218187}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1763266872973444771}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7507010071661672789}
   m_SourcePrefab: {fileID: 100100000, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
 --- !u!1 &4728465506310586097 stripped
 GameObject:
@@ -344,12 +357,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.ExplosiveAuthoring
   ExplodeOnStartBurn: 1
   Delay: 3
-  ExplosionRadius: 8
-  ExplosionImpulse: 25
+  ExplosionRadius: 12
+  ExplosionImpulse: 26
   ExplosionOffset:
-    x: 0
-    y: 0
-    z: 0
+    x: -0.2
+    y: 1.3
+    z: 0.2
   CustomExplosionAngularImpulseMultiplier: 5
   CustomExplosionAngularImpulseRandomSeed: 6
 --- !u!114 &5939108989042684116
@@ -377,6 +390,45 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.ExplodeTimerViewAuthoring
   View: {fileID: 465070527616367433}
+--- !u!114 &2206829081805218187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4728465506310586097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e14172e0c435edc45ba1a735346e5534, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.PulseAnimationSourceAuthoring
+  Config: {fileID: 11400000, guid: 5088ed4e72f36c84195d0b9b4e5163f3, type: 2}
+--- !u!114 &1763266872973444771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4728465506310586097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe5a5f79bdfe816458c6f9b3bdee4e7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.BlinkColorMaterialPropertyAuthoring
+  InitialColor: {r: 1, g: 1, b: 1, a: 0}
+--- !u!114 &7507010071661672789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4728465506310586097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6b4824190f71e840a74946902d004c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.BlinkAnimationSourceAuthoring
+  Config: {fileID: 11400000, guid: 905d76795c6e05e4b8b70996a915e9cf, type: 2}
 --- !u!4 &5392272203115144267 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}

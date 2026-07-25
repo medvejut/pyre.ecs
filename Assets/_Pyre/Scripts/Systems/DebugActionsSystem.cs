@@ -1,4 +1,5 @@
-﻿using Pyre.Cameras;
+﻿using Pyre.Animations.Components;
+using Pyre.Cameras;
 using Pyre.Cameras.Components;
 using Pyre.Components;
 using Unity.Burst;
@@ -30,6 +31,9 @@ namespace Pyre.Systems
         {
             if (!Keyboard.current.rightAltKey.isPressed)
                 return;
+
+            var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>()
+                .CreateCommandBuffer(state.WorldUnmanaged);
 
             if (Keyboard.current?.spaceKey.wasPressedThisFrame == true)
             {
@@ -100,6 +104,41 @@ namespace Pyre.Systems
             {
                 var cameraShakeBuffer = SystemAPI.GetSingletonBuffer<CameraShakeEvent>();
                 cameraShakeBuffer.Add(new CameraShakeEvent());
+            }
+
+            if (Keyboard.current?.eKey.wasPressedThisFrame == true)
+            {
+                foreach (var (pulseSource, entity) in
+                         SystemAPI.Query<RefRO<PulseAnimationSource>>().WithEntityAccess())
+                {
+                    ecb.AddComponent(entity, new PulseAnimation
+                    {
+                        MinScale = pulseSource.ValueRO.MinScale,
+                        MaxScale = pulseSource.ValueRO.MaxScale,
+                        BaseFrequency = pulseSource.ValueRO.BaseFrequency,
+                        MaxFrequency = pulseSource.ValueRO.MaxFrequency,
+
+                        TotalDuration = 3f,
+                        ElapsedTime = 0f,
+                    });
+                }
+
+                foreach (var (blinkSource, entity) in
+                         SystemAPI.Query<RefRO<BlinkAnimationSource>>().WithEntityAccess())
+                {
+                    ecb.AddComponent(entity, new BlinkAnimation
+                    {
+                        StartColor = blinkSource.ValueRO.StartColor,
+                        EndColor = blinkSource.ValueRO.EndColor,
+                        MinOpacity = blinkSource.ValueRO.MinOpacity,
+                        MaxOpacity = blinkSource.ValueRO.MaxOpacity,
+                        BaseFrequency = blinkSource.ValueRO.BaseFrequency,
+                        MaxFrequency = blinkSource.ValueRO.MaxFrequency,
+
+                        TotalDuration = 3f,
+                        ElapsedTime = 0f,
+                    });
+                }
             }
         }
 
