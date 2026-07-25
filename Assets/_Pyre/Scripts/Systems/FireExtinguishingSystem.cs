@@ -2,6 +2,7 @@
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
 
@@ -25,44 +26,98 @@ namespace Pyre.Systems
 
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
 
+            var waterLookup = SystemAPI.GetComponentLookup<Water>(true);
+            var ignitionProgressLookup = SystemAPI.GetComponentLookup<IgnitionProgress>(isReadOnly: false);
+
             foreach (var (burningLtw, burning, entity) in SystemAPI
                          .Query<RefRO<LocalToWorld>, RefRO<Burning>>()
                          .WithEntityAccess())
             {
-                var hits = new NativeList<DistanceHit>(Allocator.Temp);
+                var rigidBodyIndex = physicsWorld.GetRigidBodyIndex(entity);
+                var position = burningLtw.ValueRO.Position;
 
-                var input = new PointDistanceInput
+                if (rigidBodyIndex != -1)
                 {
-                    Position = burningLtw.ValueRO.Position,
-                    MaxDistance = 0f,
-                    Filter = CollisionFilter.Default
-                };
-
-                if (physicsWorld.CollisionWorld.CalculateDistance(input, ref hits))
-                {
-                    foreach (var hit in hits)
+                    var body = physicsWorld.Bodies[rigidBodyIndex];
+                    if (CastRigidbody(body, position, physicsWorld, waterLookup))
                     {
-                        if (SystemAPI.HasComponent<Water>(hit.Entity))
-                        {
-                            ecb.RemoveComponent<Burning>(entity);
-
-                            if (SystemAPI.HasComponent<IgnitionProgress>(entity))
-                            {
-                                ecb.SetComponent(entity, new IgnitionProgress { Elapsed = 0f });
-                            }
-
-                            break;
-                        }
+                        Extinguish(entity, ecb, ignitionProgressLookup);
                     }
                 }
-
-                hits.Dispose();
+                else
+                {
+                    if (CastPoint(entity, position, physicsWorld, waterLookup))
+                    {
+                        Extinguish(entity, ecb, ignitionProgressLookup);
+                    }
+                }
             }
         }
 
-        [BurstCompile]
-        public void OnDestroy(ref SystemState state)
+        private bool CastRigidbody(RigidBody body, float3 position, PhysicsWorldSingleton physicsWorld, ComponentLookup<Water> waterLookup)
         {
+            var result = false;
+            var hits = new NativeList<ColliderCastHit>(Allocator.Temp);
+
+            var input = new ColliderCastInput(body.Collider, position, position);
+            if (physicsWorld.CastCollider(input, ref hits))
+            {
+                foreach (var hit in hits)
+                {
+                    if (hit.Entity == body.Entity)
+                        continue;
+
+                    if (waterLookup.HasComponent(hit.Entity))
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+
+            hits.Dispose();
+            return result;
+        }
+
+        private bool CastPoint(Entity entity, float3 position, PhysicsWorldSingleton physicsWorld, ComponentLookup<Water> waterLookup)
+        {
+            var result = false;
+            var hits = new NativeList<DistanceHit>(Allocator.Temp);
+
+            var input = new PointDistanceInput
+            {
+                Position = position,
+                MaxDistance = 0f,
+                Filter = CollisionFilter.Default
+            };
+
+            if (physicsWorld.CalculateDistance(input, ref hits))
+            {
+                foreach (var hit in hits)
+                {
+                    if (hit.Entity == entity)
+                        continue;
+
+                    if (waterLookup.HasComponent(hit.Entity))
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+
+            hits.Dispose();
+            return result;
+        }
+
+        private void Extinguish(Entity entity, EntityCommandBuffer ecb, ComponentLookup<IgnitionProgress> ignitionProgressLookup)
+        {
+            ecb.RemoveComponent<Burning>(entity);
+
+            if (ignitionProgressLookup.HasComponent(entity))
+            {
+                ecb.SetComponent(entity, new IgnitionProgress { Elapsed = 0f });
+            }
         }
     }
 }

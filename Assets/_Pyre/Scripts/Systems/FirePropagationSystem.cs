@@ -49,14 +49,12 @@ namespace Pyre.Systems
                     Filter = CollisionFilter.Default
                 };
 
-                if (physicsWorld.CollisionWorld.CalculateDistance(input, ref hits))
+                if (physicsWorld.CalculateDistance(input, ref hits))
                 {
                     foreach (var hit in hits)
                     {
                         if (hit.Entity == entity)
-                        {
                             continue;
-                        }
 
                         if (ignitableLookup.HasComponent(hit.Entity) && !burningLookup.HasComponent(hit.Entity))
                         {

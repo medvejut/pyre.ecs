@@ -1,8 +1,11 @@
-﻿using Unity.Burst;
+﻿using Pyre.Components;
+using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Physics.Extensions;
+using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.VFX;
@@ -17,11 +20,15 @@ namespace Pyre.Systems
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<PhysicsWorldSingleton>();
             _toggleVfx = true;
         }
 
         public void OnUpdate(ref SystemState state)
         {
+            if (!Keyboard.current.rightAltKey.isPressed)
+                return;
+
             if (Keyboard.current?.spaceKey.wasPressedThisFrame == true)
             {
                 foreach (var (physicsVelocity, physicsMass) in SystemAPI
@@ -50,6 +57,41 @@ namespace Pyre.Systems
                 }
 
                 _toggleVfx = !_toggleVfx;
+            }
+
+            if (Keyboard.current?.tKey.wasPressedThisFrame == true)
+            {
+                var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
+
+                foreach (var (burningLtw, burning, entity) in SystemAPI
+                             .Query<RefRO<LocalToWorld>, RefRO<Burning>>()
+                             .WithEntityAccess())
+                {
+                    Debug.Log($"Checking for water hit for entity {entity}");
+                    var rigidBodyIndex = physicsWorld.GetRigidBodyIndex(entity);
+                    if (rigidBodyIndex != -1)
+                    {
+                        var hits = new NativeList<ColliderCastHit>(Allocator.Temp);
+
+                        var body = physicsWorld.Bodies[rigidBodyIndex];
+
+                        var input = new ColliderCastInput(body.Collider, burningLtw.ValueRO.Position, burningLtw.ValueRO.Position);
+                        if (physicsWorld.CastCollider(input, ref hits))
+                        {
+                            foreach (var hit in hits)
+                            {
+                                var collideWater = SystemAPI.HasComponent<Water>(hit.Entity);
+                                Debug.Log($"Hit detected for entity {entity} with {hit.Entity} {collideWater}");
+                                if (collideWater)
+                                {
+                                    Debug.Log($"Water hit detected for entity {entity} with {hit.Entity}");
+                                }
+                            }
+                        }
+
+                        hits.Dispose();
+                    }
+                }
             }
         }
 
