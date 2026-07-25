@@ -49,7 +49,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _AddPrecomputedVelocity: 0
-    - _Alpha: 0.45
+    - _Alpha: 0.35
     - _AlphaCutoffEnable: 0
     - _AlphaDstBlend: 10
     - _AlphaSrcBlend: 1
@@ -58,8 +58,8 @@ Material:
     - _CullMode: 2
     - _CullModeForward: 2
     - _DepthOffsetEnable: 0
-    - _Distortion: 0.01
-    - _DistortionBlur: 0.06
+    - _Distortion: 0.015
+    - _DistortionBlur: 1
     - _DoubleSidedEnable: 0
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 2
@@ -81,7 +81,7 @@ Material:
     - _RenderQueueType: 4
     - _RequireSplitLighting: 0
     - _Saturation: 2.5
-    - _Scale: 12
+    - _Scale: 8
     - _Smoothness: 0.8
     - _SrcBlend: 1
     - _StencilRef: 0
@@ -110,7 +110,7 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1.8767877, g: 7.168686, b: 11.984313, a: 1}
+    - _Color: {r: 2.6541786, g: 10.138053, b: 16.948378, a: 1}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor2: {r: 8, g: 0, b: 0, a: 1}
