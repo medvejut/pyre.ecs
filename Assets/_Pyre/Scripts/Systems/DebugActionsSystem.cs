@@ -140,6 +140,24 @@ namespace Pyre.Systems
                     });
                 }
             }
+
+            if (Keyboard.current?.aKey.wasPressedThisFrame == true)
+            {
+                var entity = SystemAPI.GetSingletonEntity<PlayerTag>();
+                var archetype = state.EntityManager.GetChunk(entity).Archetype;
+
+                var componentTypes = archetype.GetComponentTypes(Allocator.Temp);
+
+                foreach (var type in componentTypes)
+                {
+                    Debug.Log($"Component: {type.GetManagedType().Name} IsManagedComponent={type.IsManagedComponent} IsComponent={type.IsComponent} ToString={type.ToString()}");
+                }
+
+                componentTypes.Dispose();
+
+                var audioSource = SystemAPI.ManagedAPI.GetComponent<AudioSource>(entity);
+                Debug.Log($"AudioSource: {audioSource.clip.name} IsPlaying={audioSource.isPlaying} Volume={audioSource.volume}");
+            }
         }
 
         [BurstCompile]

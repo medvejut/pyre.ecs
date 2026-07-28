@@ -114,6 +114,8 @@ MonoBehaviour:
   burningRadius: 0
   ignitionTime: 1
   coolingRate: 0.5
+  igniteClip: {fileID: 8300000, guid: 10343cfbf48056a44bdc53061f0aeef1, type: 3}
+  loopClip: {fileID: 0}
 --- !u!1 &3206163557830189704
 GameObject:
   m_ObjectHideFlags: 0

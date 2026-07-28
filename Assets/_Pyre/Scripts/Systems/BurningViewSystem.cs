@@ -1,7 +1,9 @@
-﻿using Pyre.Components;
+﻿using Pyre.Audio.Components;
+using Pyre.Components;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Rendering;
+using Unity.Transforms;
 using UnityEngine.VFX;
 
 namespace Pyre.Systems
@@ -21,8 +23,10 @@ namespace Pyre.Systems
                 .GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
-            foreach (var (burningView, entity) in SystemAPI
-                         .Query<RefRO<BurningView>>()
+            var soundEventBuffer = SystemAPI.GetSingletonBuffer<SoundEvent>(isReadOnly: false);
+
+            foreach (var (burningView, ltw, entity) in SystemAPI
+                         .Query<RefRO<BurningView>, RefRO<LocalToWorld>>()
                          .WithEntityAccess())
             {
                 var shouldRender = SystemAPI.HasComponent<Burning>(entity);
@@ -36,6 +40,11 @@ namespace Pyre.Systems
                 if (shouldRender)
                 {
                     ecb.RemoveComponent<DisableRendering>(burningView.ValueRO.FireEntity);
+
+                    if (SystemAPI.TryGetComponent<Ignitable>(entity, out var ignitable))
+                    {
+                        soundEventBuffer.Add(new SoundEvent { Position = ltw.ValueRO.Position, Clip = ignitable.OnBurnClip, SpatialBlend = 0f });
+                    }
                 }
                 else
                 {

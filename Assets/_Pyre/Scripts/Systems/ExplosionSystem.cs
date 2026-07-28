@@ -1,4 +1,5 @@
-﻿using Pyre.Cameras.Components;
+﻿using Pyre.Audio.Components;
+using Pyre.Cameras.Components;
 using Pyre.Components;
 using Unity.Burst;
 using Unity.Collections;
@@ -27,6 +28,7 @@ namespace Pyre.Systems
 
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
             var cameraShakeBuffer = SystemAPI.GetSingletonBuffer<CameraShakeEvent>(isReadOnly: false);
+            var soundEventBuffer = SystemAPI.GetSingletonBuffer<SoundEvent>(isReadOnly: false);
 
             var destructibleLookup = SystemAPI.GetComponentLookup<Destructible>(true);
             var destroyRequestedLookup = SystemAPI.GetComponentLookup<DestroyRequested>(true);
@@ -53,6 +55,8 @@ namespace Pyre.Systems
                 }
 
                 hits.Dispose();
+
+                soundEventBuffer.Add(new SoundEvent { Position = explosion.ValueRO.Position, Clip = explosion.ValueRO.Clip, SpatialBlend = 0f });
 
                 ecb.DestroyEntity(entity);
             }

@@ -16,6 +16,8 @@ namespace Pyre.Components
         [Space]
         public float CustomExplosionAngularImpulseMultiplier = 5f;
         public uint CustomExplosionAngularImpulseRandomSeed = 2;
+        [Space]
+        public AudioClip ExplosionClip;
 
         private void OnDrawGizmosSelected()
         {
@@ -38,7 +40,8 @@ namespace Pyre.Components
                     CustomExplosionAngularImpulseMultiplier = authoring.CustomExplosionAngularImpulseMultiplier,
                     CustomExplosionAngularImpulseRandomSeed = authoring.CustomExplosionAngularImpulseRandomSeed,
                     ExplosionImpulse = authoring.ExplosionImpulse,
-                    ExplosionOffset = authoring.ExplosionOffset
+                    ExplosionOffset = authoring.ExplosionOffset,
+                    ExplosionClip = authoring.ExplosionClip
                 });
             }
         }

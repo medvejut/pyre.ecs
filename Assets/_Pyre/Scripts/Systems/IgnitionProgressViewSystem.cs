@@ -2,6 +2,7 @@
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Rendering;
+using UnityEngine;
 
 namespace Pyre.Systems
 {
@@ -13,7 +14,7 @@ namespace Pyre.Systems
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
         }
 
-        [BurstCompile]
+        // [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var ecb = SystemAPI
@@ -36,6 +37,20 @@ namespace Pyre.Systems
                     else
                     {
                         ecb.AddComponent<DisableRendering>(view.ValueRO.ProgressEntity);
+                    }
+
+                    if (SystemAPI.ManagedAPI.TryGetComponent(view.ValueRO.ProgressEntity, out AudioSource audioSource))
+                    {
+                        if (shouldRender)
+                        {
+                            audioSource.clip = ignitable.ValueRO.LoopClip;
+                            audioSource.loop = true;
+                            audioSource.Play();
+                        }
+                        else
+                        {
+                            audioSource.Stop();
+                        }
                     }
                 }
 

@@ -1,5 +1,6 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine;
 
 namespace Pyre.Components
 {
@@ -14,5 +15,7 @@ namespace Pyre.Components
 
         public float CustomExplosionAngularImpulseMultiplier;
         public uint CustomExplosionAngularImpulseRandomSeed;
+
+        public UnityObjectRef<AudioClip> ExplosionClip;
     }
 }

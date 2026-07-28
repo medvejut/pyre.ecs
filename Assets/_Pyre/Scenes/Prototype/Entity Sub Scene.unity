@@ -50537,6 +50537,51 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3401653903027313230, guid: 4a52592db286e0a4abfcbf43b9b7e93c, type: 3}
   m_PrefabInstance: {fileID: 1632694925}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2057456344
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2057456345}
+  - component: {fileID: 2057456346}
+  m_Layer: 0
+  m_Name: '[ Audio Defaults ]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2057456345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2057456344}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2057456346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2057456344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d9915e28b3a59546a944ace62456329, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Audio.AudioDefaultsAuthoring
+  extinguishClip: {fileID: 8300000, guid: 39916f36cd3ed6c4bb186ab286ca2d47, type: 3}
 --- !u!1001 &2060748016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -50974,7 +51019,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1204391633442488046, guid: d5a772f403db6b54ca06c119833541b4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.42292
+      value: -8.42292
       objectReference: {fileID: 0}
     - target: {fileID: 1204391633442488046, guid: d5a772f403db6b54ca06c119833541b4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -50982,7 +51027,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1204391633442488046, guid: d5a772f403db6b54ca06c119833541b4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1204391633442488046, guid: d5a772f403db6b54ca06c119833541b4, type: 3}
       propertyPath: m_LocalRotation.w
@@ -51111,6 +51156,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 347893084}
+  - {fileID: 2057456345}
   - {fileID: 513936184}
   - {fileID: 6577569945142761989}
   - {fileID: 5713222857435732343}
