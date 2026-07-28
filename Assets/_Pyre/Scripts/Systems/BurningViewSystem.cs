@@ -41,10 +41,7 @@ namespace Pyre.Systems
                 {
                     ecb.RemoveComponent<DisableRendering>(burningView.ValueRO.FireEntity);
 
-                    if (SystemAPI.TryGetComponent<Ignitable>(entity, out var ignitable))
-                    {
-                        soundEventBuffer.Add(new SoundEvent { Position = ltw.ValueRO.Position, Clip = ignitable.OnBurnClip, SpatialBlend = 0f });
-                    }
+                    PlaySound(ref state, entity, ltw, soundEventBuffer);
                 }
                 else
                 {
@@ -64,6 +61,26 @@ namespace Pyre.Systems
                         vfx.playRate = 3f;
                     }
                 }
+            }
+        }
+
+        private void PlaySound(ref SystemState state, Entity entity, RefRO<LocalToWorld> ltw, DynamicBuffer<SoundEvent> soundEventBuffer)
+        {
+            if (SystemAPI.HasComponent<MuteBurnSound>(entity))
+                return;
+
+            if (SystemAPI.HasBuffer<BurnSoundClip>(entity))
+            {
+                var burnSoundClips = SystemAPI.GetBuffer<BurnSoundClip>(entity);
+                foreach (var burnSoundClip in burnSoundClips)
+                {
+                    soundEventBuffer.Add(new SoundEvent { Position = ltw.ValueRO.Position, Clip = burnSoundClip.Clip, SpatialBlend = 0f });
+                }
+            }
+
+            if (SystemAPI.TryGetComponent<Ignitable>(entity, out var ignitable) && ignitable.OnBurnClip)
+            {
+                soundEventBuffer.Add(new SoundEvent { Position = ltw.ValueRO.Position, Clip = ignitable.OnBurnClip, SpatialBlend = 0f });
             }
         }
     }
