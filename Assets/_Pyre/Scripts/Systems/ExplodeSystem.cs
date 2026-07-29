@@ -1,4 +1,5 @@
 ﻿using Pyre.Animations.Components;
+using Pyre.Audio.Components;
 using Pyre.Components;
 using Unity.Burst;
 using Unity.Entities;
@@ -47,6 +48,12 @@ namespace Pyre.Systems
 
                 var delay = explosive.ValueRO.Delay;
                 ecb.AddComponent(entity, new ExplodeTimer { TimeRemaining = delay });
+
+                if (explosive.ValueRO.TickAudioSourceEntity != Entity.Null)
+                {
+                    SystemAPI.GetSingletonBuffer<PlayAudioSourceEvent>()
+                        .Add(new PlayAudioSourceEvent { AudioSourceEntity = explosive.ValueRO.TickAudioSourceEntity });
+                }
 
                 if (_pulseAnimationSourceLookup.TryGetComponent(entity, out var pulseAnimationSource))
                 {
@@ -104,6 +111,13 @@ namespace Pyre.Systems
                     });
 
                     ecb.RemoveComponent<ExplodeTimer>(entity);
+                    ecb.RemoveComponent<Explosive>(entity);
+
+                    if (explosive.ValueRO.TickAudioSourceEntity != Entity.Null)
+                    {
+                        SystemAPI.GetSingletonBuffer<StopAudioSourceEvent>()
+                            .Add(new StopAudioSourceEvent { AudioSourceEntity = explosive.ValueRO.TickAudioSourceEntity });
+                    }
                 }
             }
         }

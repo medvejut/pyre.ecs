@@ -17,5 +17,6 @@ namespace Pyre.Components
         public uint CustomExplosionAngularImpulseRandomSeed;
 
         public UnityObjectRef<AudioClip> ExplosionClip;
+        public Entity TickAudioSourceEntity;
     }
 }

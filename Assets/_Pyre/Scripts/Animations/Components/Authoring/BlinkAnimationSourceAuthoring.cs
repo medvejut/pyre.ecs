@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Pyre.Animations.Components.Bake
+namespace Pyre.Animations.Components.Authoring
 {
     public class BlinkAnimationSourceAuthoring : MonoBehaviour
     {

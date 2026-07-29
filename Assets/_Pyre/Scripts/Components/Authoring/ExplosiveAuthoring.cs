@@ -18,6 +18,7 @@ namespace Pyre.Components
         public uint CustomExplosionAngularImpulseRandomSeed = 2;
         [Space]
         public AudioClip ExplosionClip;
+        public AudioSource TickAudioSource;
 
         private void OnDrawGizmosSelected()
         {
@@ -37,11 +38,15 @@ namespace Pyre.Components
                     ExplodeOnStartBurn = authoring.ExplodeOnStartBurn,
                     Delay = authoring.Delay,
                     ExplosionRadius = authoring.ExplosionRadius,
+
                     CustomExplosionAngularImpulseMultiplier = authoring.CustomExplosionAngularImpulseMultiplier,
                     CustomExplosionAngularImpulseRandomSeed = authoring.CustomExplosionAngularImpulseRandomSeed,
+
                     ExplosionImpulse = authoring.ExplosionImpulse,
                     ExplosionOffset = authoring.ExplosionOffset,
-                    ExplosionClip = authoring.ExplosionClip
+
+                    ExplosionClip = authoring.ExplosionClip,
+                    TickAudioSourceEntity = authoring.TickAudioSource ? GetEntity(authoring.TickAudioSource, TransformUsageFlags.Dynamic) : Entity.Null
                 });
             }
         }

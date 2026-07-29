@@ -1,8 +1,7 @@
-using Pyre.Audio.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace Pyre.Audio
+namespace Pyre.Components
 {
     public class AudioDefaultsAuthoring : MonoBehaviour
     {

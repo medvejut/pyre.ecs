@@ -1,7 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace Pyre.Audio.Components
+namespace Pyre.Components
 {
     public struct AudioDefaults : IComponentData
     {
