@@ -48,8 +48,48 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[1].m_Name
+      value: Speed
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[2].m_Name
+      value: LinearDrag
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[3].m_Name
+      value: Lifetime
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
       propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[0].m_Value
       value: 0.5222835
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[1].m_Value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[2].m_Value
+      value: 0.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[3].m_Value
+      value: 0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[1].m_Overridden
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[2].m_Overridden
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3701223121589901819, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
+      propertyPath: m_PropertySheet.m_Float.m_Array.Array.data[3].m_Overridden
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5254723540845658883, guid: 0470d04a3ccb4fd47a49d00b81afd243, type: 3}
       propertyPath: m_LocalScale.x
@@ -261,6 +301,7 @@ MonoBehaviour:
   coolingRate: 0.2
   igniteClip: {fileID: 8300000, guid: 10343cfbf48056a44bdc53061f0aeef1, type: 3}
   loopClip: {fileID: 8300000, guid: a9691dd2c75dd7b4f883c0ae4289b651, type: 3}
+  extinguishClip: {fileID: 0}
 --- !u!114 &6685625062363387980
 MonoBehaviour:
   m_ObjectHideFlags: 0

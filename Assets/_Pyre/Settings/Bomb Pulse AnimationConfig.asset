@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28ef2601abb88944283893d51ef23082, type: 3}
   m_Name: Bomb Pulse AnimationConfig
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.PulseAnimationConfig
-  minScale: 2.7
-  maxScale: 3.3
+  minScale: 3.15
+  maxScale: 3.85
   baseFrequency: 1
   maxFrequency: 4

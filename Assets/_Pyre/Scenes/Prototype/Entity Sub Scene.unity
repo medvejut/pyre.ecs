@@ -50794,16 +50794,28 @@ PrefabInstance:
       value: Water
       objectReference: {fileID: 0}
     - target: {fileID: 3913785815643121472, guid: 77eea5f08f707f5409f62a6942fe0d56, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3913785815643121472, guid: 77eea5f08f707f5409f62a6942fe0d56, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 3913785815643121472, guid: 77eea5f08f707f5409f62a6942fe0d56, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3913785815643121472, guid: 77eea5f08f707f5409f62a6942fe0d56, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3913785815643121472, guid: 77eea5f08f707f5409f62a6942fe0d56, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 3913785815643121472, guid: 77eea5f08f707f5409f62a6942fe0d56, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 3913785815643121472, guid: 77eea5f08f707f5409f62a6942fe0d56, type: 3}
       propertyPath: m_LocalRotation.w
@@ -50970,7 +50982,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5230152117263980967, guid: c90fd9ad1c62f3447a766d91a2467d34, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.675
+      value: 4.571
       objectReference: {fileID: 0}
     - target: {fileID: 5230152117263980967, guid: c90fd9ad1c62f3447a766d91a2467d34, type: 3}
       propertyPath: m_LocalPosition.z
