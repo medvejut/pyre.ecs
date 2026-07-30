@@ -108,6 +108,7 @@ namespace Pyre.Systems
                         Impulse = explosive.ValueRO.ExplosionImpulse,
                         AngularImpulse = CalculateExplosionAngularImpulse(explosive),
                         Clip = explosive.ValueRO.ExplosionClip,
+                        Vfx = explosive.ValueRO.ExplosionVfx
                     });
 
                     ecb.RemoveComponent<ExplodeTimer>(entity);

@@ -40,6 +40,9 @@ namespace Pyre.Systems
                          .Query<RefRO<LocalToWorld>, RefRO<Burning>>()
                          .WithEntityAccess())
             {
+                if (!burning.ValueRO.CanSpreadHeat)
+                    continue;
+
                 var hits = new NativeList<DistanceHit>(Allocator.Temp);
 
                 var input = new PointDistanceInput

@@ -22,7 +22,7 @@ namespace Pyre.Audio
 
             foreach (var soundEvent in buffer)
             {
-                if (soundEvent.Clip.Value != null)
+                if (soundEvent.Clip)
                 {
                     PlayClip(soundEvent.Clip.Value, soundEvent.Position, volume, soundEvent.SpatialBlend);
                 }

@@ -13,5 +13,6 @@ namespace Pyre.Components
         public float3 AngularImpulse;
 
         public UnityObjectRef<AudioClip> Clip;
+        public UnityObjectRef<ParticleSystem> Vfx;
     }
 }

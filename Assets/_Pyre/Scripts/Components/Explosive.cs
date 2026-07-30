@@ -18,5 +18,7 @@ namespace Pyre.Components
 
         public UnityObjectRef<AudioClip> ExplosionClip;
         public Entity TickAudioSourceEntity;
+
+        public UnityObjectRef<ParticleSystem> ExplosionVfx;
     }
 }

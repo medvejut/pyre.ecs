@@ -1086,8 +1086,8 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 135000
-  m_Range: 6
+  m_Intensity: 524288
+  m_Range: 4.82
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -1137,7 +1137,7 @@ Light:
   m_ForceVisible: 0
   m_ShapeRadius: 0
   m_ShadowAngle: 0
-  m_LightUnit: 2
+  m_LightUnit: 4
   m_LuxAtDistance: 30
   m_EnableSpotReflector: 1
 --- !u!4 &2028523969

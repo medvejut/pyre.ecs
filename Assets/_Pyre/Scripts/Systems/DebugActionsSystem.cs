@@ -158,6 +158,18 @@ namespace Pyre.Systems
                 var audioSource = SystemAPI.ManagedAPI.GetComponent<AudioSource>(entity);
                 Debug.Log($"AudioSource: {audioSource.clip.name} IsPlaying={audioSource.isPlaying} Volume={audioSource.volume}");
             }
+
+            if (Keyboard.current?.bKey.wasPressedThisFrame == true)
+            {
+                foreach (var (_, entity) in
+                         SystemAPI.Query<RefRO<Explosive>>().WithNone<Burning>().WithEntityAccess())
+                {
+                    state.EntityManager.GetName(entity, out var name);
+                    Debug.Log($"Adding Burning component to entity {entity} with name {name}");
+
+                    ecb.AddComponent(entity, new Burning { HeatRadius = 0 });
+                }
+            }
         }
 
         [BurstCompile]

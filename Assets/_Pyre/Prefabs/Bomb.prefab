@@ -500,6 +500,7 @@ MonoBehaviour:
   CustomExplosionAngularImpulseRandomSeed: 6
   ExplosionClip: {fileID: 8300000, guid: c297b92dd106571459f21dfd3f45568e, type: 3}
   TickAudioSource: {fileID: 3372427359875174172}
+  ExplosionVfx: {fileID: 971865183275190236, guid: 26dc1a2de20161b4fbc2edde19cdebf7, type: 3}
 --- !u!114 &5939108989042684116
 MonoBehaviour:
   m_ObjectHideFlags: 0

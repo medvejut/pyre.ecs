@@ -1,5 +1,4 @@
-﻿using System;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -19,6 +18,8 @@ namespace Pyre.Components
         [Space]
         public AudioClip ExplosionClip;
         public AudioSource TickAudioSource;
+        [Space]
+        public ParticleSystem ExplosionVfx;
 
         private void OnDrawGizmosSelected()
         {
@@ -46,7 +47,9 @@ namespace Pyre.Components
                     ExplosionOffset = authoring.ExplosionOffset,
 
                     ExplosionClip = authoring.ExplosionClip,
-                    TickAudioSourceEntity = authoring.TickAudioSource ? GetEntity(authoring.TickAudioSource, TransformUsageFlags.Dynamic) : Entity.Null
+                    TickAudioSourceEntity = authoring.TickAudioSource ? GetEntity(authoring.TickAudioSource, TransformUsageFlags.Dynamic) : Entity.Null,
+
+                    ExplosionVfx = authoring.ExplosionVfx
                 });
             }
         }
