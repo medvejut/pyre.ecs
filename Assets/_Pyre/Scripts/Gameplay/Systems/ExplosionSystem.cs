@@ -14,16 +14,34 @@ namespace Pyre.Gameplay.Systems
 {
     public partial struct ExplosionSystem : ISystem
     {
+        private ComponentLookup<Destructible> _destructibleLookup;
+        private ComponentLookup<DestroyRequested> _destroyRequestedLookup;
+        private ComponentLookup<PhysicsVelocity> _velocityLookup;
+        private ComponentLookup<PhysicsMass> _massLookup;
+        private ComponentLookup<LocalToWorld> _ltwLookup;
+        private ComponentLookup<KnockbackVelocity> _knockbackVelocityLookup;
+        private ComponentLookup<Ignitable> _ignitableLookup;
+
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+
+            _destructibleLookup = state.GetComponentLookup<Destructible>(isReadOnly: true);
+            _destroyRequestedLookup = state.GetComponentLookup<DestroyRequested>(isReadOnly: true);
+            _velocityLookup = state.GetComponentLookup<PhysicsVelocity>(isReadOnly: false);
+            _massLookup = state.GetComponentLookup<PhysicsMass>(isReadOnly: true);
+            _ltwLookup = state.GetComponentLookup<LocalToWorld>(isReadOnly: true);
+            _knockbackVelocityLookup = state.GetComponentLookup<KnockbackVelocity>(isReadOnly: false);
+            _ignitableLookup = state.GetComponentLookup<Ignitable>(isReadOnly: true);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            UpdateLookups(ref state);
+
             var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
@@ -31,14 +49,6 @@ namespace Pyre.Gameplay.Systems
             var cameraShakeBuffer = SystemAPI.GetSingletonBuffer<CameraShakeEvent>(isReadOnly: false);
             var soundEventBuffer = SystemAPI.GetSingletonBuffer<SoundEvent>(isReadOnly: false);
             var playParticleBuffer = SystemAPI.GetSingletonBuffer<PlayParticlesEvent>(isReadOnly: false);
-
-            var destructibleLookup = SystemAPI.GetComponentLookup<Destructible>(true);
-            var destroyRequestedLookup = SystemAPI.GetComponentLookup<DestroyRequested>(true);
-            var velocityLookup = SystemAPI.GetComponentLookup<PhysicsVelocity>();
-            var massLookup = SystemAPI.GetComponentLookup<PhysicsMass>(true);
-            var ltwLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true);
-            var knockbackVelocityLookup = SystemAPI.GetComponentLookup<KnockbackVelocity>();
-            var ignitableLookup = SystemAPI.GetComponentLookup<Ignitable>(true);
 
             foreach (var (explosion, entity) in SystemAPI
                          .Query<RefRO<Explosion>>()
@@ -49,9 +59,9 @@ namespace Pyre.Gameplay.Systems
                 {
                     foreach (var hit in hits)
                     {
-                        DestroyHitEntity(hit.Entity, destructibleLookup, destroyRequestedLookup, ecb);
-                        TryKickBody(hit.Entity, explosion.ValueRO, velocityLookup, massLookup, ltwLookup, knockbackVelocityLookup);
-                        TryBurnEntity(hit.Entity, ignitableLookup, ecb);
+                        DestroyHitEntity(hit.Entity, ecb);
+                        TryKickBody(hit.Entity, explosion.ValueRO);
+                        TryBurnEntity(hit.Entity, ecb);
                         cameraShakeBuffer.Add(new CameraShakeEvent());
                     }
                 }
@@ -69,22 +79,33 @@ namespace Pyre.Gameplay.Systems
             }
         }
 
-        private static void DestroyHitEntity(Entity hitEntity, ComponentLookup<Destructible> destructibleLookup, ComponentLookup<DestroyRequested> destroyRequestedLookup, EntityCommandBuffer ecb)
+        private void UpdateLookups(ref SystemState state)
         {
-            if (destructibleLookup.HasComponent(hitEntity) && !destroyRequestedLookup.HasComponent(hitEntity))
+            _destructibleLookup.Update(ref state);
+            _destroyRequestedLookup.Update(ref state);
+            _velocityLookup.Update(ref state);
+            _massLookup.Update(ref state);
+            _ltwLookup.Update(ref state);
+            _knockbackVelocityLookup.Update(ref state);
+            _ignitableLookup.Update(ref state);
+        }
+
+        private void DestroyHitEntity(Entity hitEntity, EntityCommandBuffer ecb)
+        {
+            if (_destructibleLookup.HasComponent(hitEntity) && !_destroyRequestedLookup.HasComponent(hitEntity))
             {
                 ecb.AddComponent<DestroyRequested>(hitEntity);
             }
         }
 
-        private static void TryKickBody(Entity hitEntity, Explosion explosion, ComponentLookup<PhysicsVelocity> velocityLookup, ComponentLookup<PhysicsMass> massLookup, ComponentLookup<LocalToWorld> ltwLookup, ComponentLookup<KnockbackVelocity> knockbackVelocityLookup)
+        private void TryKickBody(Entity hitEntity, in Explosion explosion)
         {
-            if (!velocityLookup.HasComponent(hitEntity) || !massLookup.HasComponent(hitEntity) || !ltwLookup.HasComponent(hitEntity))
+            if (!_velocityLookup.HasComponent(hitEntity) || !_massLookup.HasComponent(hitEntity) || !_ltwLookup.HasComponent(hitEntity))
                 return;
 
-            var velocity = velocityLookup.GetRefRW(hitEntity);
-            var mass = massLookup[hitEntity];
-            var ltw = ltwLookup[hitEntity];
+            var velocity = _velocityLookup.GetRefRW(hitEntity);
+            var mass = _massLookup[hitEntity];
+            var ltw = _ltwLookup[hitEntity];
 
             var position = ltw.Position;
             var direction = math.normalizesafe(position - explosion.Position);
@@ -93,9 +114,9 @@ namespace Pyre.Gameplay.Systems
             var t = math.saturate(1f - distance / explosion.Radius);
             var impulse = explosion.Impulse * t;
 
-            if (knockbackVelocityLookup.HasComponent(hitEntity))
+            if (_knockbackVelocityLookup.HasComponent(hitEntity))
             {
-                var knockbackVelocity = knockbackVelocityLookup.GetRefRW(hitEntity);
+                var knockbackVelocity = _knockbackVelocityLookup.GetRefRW(hitEntity);
                 knockbackVelocity.ValueRW.Linear += direction * impulse;
                 knockbackVelocity.ValueRW.Angular += explosion.AngularImpulse;
             }
@@ -106,9 +127,9 @@ namespace Pyre.Gameplay.Systems
             }
         }
 
-        private void TryBurnEntity(Entity hitEntity, ComponentLookup<Ignitable> ignitableLookup, EntityCommandBuffer ecb)
+        private void TryBurnEntity(Entity hitEntity, EntityCommandBuffer ecb)
         {
-            if (ignitableLookup.TryGetRefRO(hitEntity, out var ignitable))
+            if (_ignitableLookup.TryGetRefRO(hitEntity, out var ignitable))
             {
                 ecb.AddComponent(hitEntity, new Burning { HeatRadius = ignitable.ValueRO.BurningRadius });
             }

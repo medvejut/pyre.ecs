@@ -11,17 +11,27 @@ namespace Pyre.Gameplay.Systems
 {
     public partial struct FireExtinguishingSystem : ISystem
     {
+        private ComponentLookup<Water> _waterLookup;
+        private ComponentLookup<IgnitionProgress> _ignitionProgressLookup;
+        private ComponentLookup<Ignitable> _ignitableLookup;
+
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
             state.RequireForUpdate<AudioDefaults>();
+
+            _waterLookup = state.GetComponentLookup<Water>(isReadOnly: true);
+            _ignitionProgressLookup = state.GetComponentLookup<IgnitionProgress>(isReadOnly: false);
+            _ignitableLookup = state.GetComponentLookup<Ignitable>(isReadOnly: true);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            UpdateLookups(ref state);
+
             var ecb = SystemAPI
                 .GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
@@ -29,10 +39,6 @@ namespace Pyre.Gameplay.Systems
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
             var audioDefaults = SystemAPI.GetSingleton<AudioDefaults>();
             var soundEventBuffer = SystemAPI.GetSingletonBuffer<SoundEvent>(isReadOnly: false);
-
-            var waterLookup = SystemAPI.GetComponentLookup<Water>(true);
-            var ignitionProgressLookup = SystemAPI.GetComponentLookup<IgnitionProgress>(isReadOnly: false);
-            var ignitableLookup = SystemAPI.GetComponentLookup<Ignitable>(true);
 
             foreach (var (burningLtw, burning, entity) in SystemAPI
                          .Query<RefRO<LocalToWorld>, RefRO<Burning>>()
@@ -44,22 +50,29 @@ namespace Pyre.Gameplay.Systems
                 if (rigidBodyIndex != -1)
                 {
                     var body = physicsWorld.Bodies[rigidBodyIndex];
-                    if (CastRigidbody(body, position, physicsWorld, waterLookup))
+                    if (CastRigidbody(body, position, physicsWorld))
                     {
-                        Extinguish(entity, position, ecb, ignitionProgressLookup, ignitableLookup, audioDefaults, soundEventBuffer);
+                        Extinguish(entity, position, ecb, audioDefaults, soundEventBuffer);
                     }
                 }
                 else
                 {
-                    if (CastPoint(entity, position, physicsWorld, waterLookup))
+                    if (CastPoint(entity, position, physicsWorld))
                     {
-                        Extinguish(entity, position, ecb, ignitionProgressLookup, ignitableLookup, audioDefaults, soundEventBuffer);
+                        Extinguish(entity, position, ecb, audioDefaults, soundEventBuffer);
                     }
                 }
             }
         }
 
-        private bool CastRigidbody(RigidBody body, float3 position, PhysicsWorldSingleton physicsWorld, ComponentLookup<Water> waterLookup)
+        private void UpdateLookups(ref SystemState state)
+        {
+            _waterLookup.Update(ref state);
+            _ignitionProgressLookup.Update(ref state);
+            _ignitableLookup.Update(ref state);
+        }
+
+        private bool CastRigidbody(RigidBody body, float3 position, PhysicsWorldSingleton physicsWorld)
         {
             var result = false;
             var hits = new NativeList<ColliderCastHit>(Allocator.Temp);
@@ -72,7 +85,7 @@ namespace Pyre.Gameplay.Systems
                     if (hit.Entity == body.Entity)
                         continue;
 
-                    if (waterLookup.HasComponent(hit.Entity))
+                    if (_waterLookup.HasComponent(hit.Entity))
                     {
                         result = true;
                         break;
@@ -84,7 +97,7 @@ namespace Pyre.Gameplay.Systems
             return result;
         }
 
-        private bool CastPoint(Entity entity, float3 position, PhysicsWorldSingleton physicsWorld, ComponentLookup<Water> waterLookup)
+        private bool CastPoint(Entity entity, float3 position, PhysicsWorldSingleton physicsWorld)
         {
             var result = false;
             var hits = new NativeList<DistanceHit>(Allocator.Temp);
@@ -103,7 +116,7 @@ namespace Pyre.Gameplay.Systems
                     if (hit.Entity == entity)
                         continue;
 
-                    if (waterLookup.HasComponent(hit.Entity))
+                    if (_waterLookup.HasComponent(hit.Entity))
                     {
                         result = true;
                         break;
@@ -115,16 +128,16 @@ namespace Pyre.Gameplay.Systems
             return result;
         }
 
-        private void Extinguish(Entity entity, float3 position, EntityCommandBuffer ecb, ComponentLookup<IgnitionProgress> ignitionProgressLookup, ComponentLookup<Ignitable> ignitableLookup, AudioDefaults audioDefaults, DynamicBuffer<SoundEvent> soundEventBuffer)
+        private void Extinguish(Entity entity, float3 position, EntityCommandBuffer ecb, AudioDefaults audioDefaults, DynamicBuffer<SoundEvent> soundEventBuffer)
         {
             ecb.RemoveComponent<Burning>(entity);
 
-            if (ignitionProgressLookup.HasComponent(entity))
+            if (_ignitionProgressLookup.HasComponent(entity))
             {
                 ecb.SetComponent(entity, new IgnitionProgress { Elapsed = 0f });
             }
 
-            var clip = ignitableLookup.TryGetComponent(entity, out var ignitable) && ignitable.ExtinguishClip
+            var clip = _ignitableLookup.TryGetComponent(entity, out var ignitable) && ignitable.ExtinguishClip
                 ? ignitable.ExtinguishClip
                 : audioDefaults.ExtinguishClip;
 
