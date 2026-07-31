@@ -2,7 +2,7 @@
 using Unity.Entities;
 using UnityEngine;
 
-namespace Pyre.Animations.Components.Authoring
+namespace Pyre.Animations.Components
 {
     public class PulseAnimationSourceAuthoring : MonoBehaviour
     {

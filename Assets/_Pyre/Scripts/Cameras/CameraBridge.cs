@@ -13,6 +13,7 @@ namespace Pyre.Cameras
         private void Start()
         {
             var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            entityManager.CreateSingletonBuffer<CameraShakeEvent>();
             _entityQuery = entityManager.CreateEntityQuery(typeof(CameraShakeEvent));
         }
 

@@ -4,7 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using Random = Unity.Mathematics.Random;
 
-namespace Pyre.Animations.Components.Authoring
+namespace Pyre.Animations.Components
 {
     [RequireComponent(typeof(Light))]
     public class LightBlinkAnimationAuthoring : MonoBehaviour
