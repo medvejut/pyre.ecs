@@ -493,9 +493,9 @@ MonoBehaviour:
   ExplosionRadius: 12
   ExplosionImpulse: 26
   ExplosionOffset:
-    x: -0.2
+    x: -0.5
     y: 1.3
-    z: 0.2
+    z: 0.5
   CustomExplosionAngularImpulseMultiplier: 5
   CustomExplosionAngularImpulseRandomSeed: 6
   ExplosionClip: {fileID: 8300000, guid: c297b92dd106571459f21dfd3f45568e, type: 3}

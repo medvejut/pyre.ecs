@@ -50,7 +50,7 @@ namespace Pyre.Gameplay.Systems
 
                 var input = new PointDistanceInput
                 {
-                    Position = BodyCenter.Get(physicsWorld, entity, ltw.ValueRO),
+                    Position = BodyCenter.GetWorldPosition(physicsWorld, entity, ltw.ValueRO),
                     MaxDistance = burning.ValueRO.HeatRadius,
                     Filter = CollisionFilter.Default
                 };

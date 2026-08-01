@@ -49,9 +49,6 @@ namespace Pyre.Gameplay.Systems
 
                 if (rigidBodyIndex != -1)
                 {
-                    // Casts the baked collider, which already carries the +height/2 center offset that
-                    // compensates for the foot-level origin. Deliberately fed the origin, not the body
-                    // center: passing a center here would apply that offset twice.
                     var body = physicsWorld.Bodies[rigidBodyIndex];
                     if (CastRigidbody(body, position, physicsWorld))
                     {
@@ -60,8 +57,6 @@ namespace Pyre.Gameplay.Systems
                 }
                 else
                 {
-                    // Only reached when the entity has no collider at all, so there is no body center to
-                    // measure from and the foot-level origin is all we have.
                     if (CastPoint(entity, position, physicsWorld))
                     {
                         Extinguish(entity, position, ecb, audioDefaults, soundEventBuffer);

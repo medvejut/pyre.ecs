@@ -108,7 +108,7 @@ namespace Pyre.Gameplay.Systems
             var mass = _massLookup[hitEntity];
             var ltw = _ltwLookup[hitEntity];
 
-            var position = BodyCenter.Get(physicsWorld, hitEntity, ltw);
+            var position = BodyCenter.GetWorldPosition(physicsWorld, hitEntity, ltw);
             var direction = math.normalizesafe(position - explosion.Position);
 
             var distance = math.distance(position, explosion.Position);
