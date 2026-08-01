@@ -25,8 +25,10 @@ namespace Pyre.Animations.Systems
             foreach (var (blink, blinkColor, entity) in
                      SystemAPI.Query<RefRW<BlinkAnimation>, RefRW<BlinkColorMaterialProperty>>().WithEntityAccess())
             {
-                if (blink.ValueRO.ElapsedTime <= 0f)
+                if (blink.ValueRO.ResetOnFinish && blink.ValueRO.ElapsedTime <= 0f)
+                {
                     blink.ValueRW.ResetColor = blinkColor.ValueRO.Value;
+                }
 
                 blink.ValueRW.ElapsedTime += deltaTime;
 
@@ -35,7 +37,11 @@ namespace Pyre.Animations.Systems
 
                 if (elapsed >= totalDuration)
                 {
-                    blinkColor.ValueRW.Value = blink.ValueRO.ResetColor;
+                    if (blink.ValueRO.ResetOnFinish)
+                    {
+                        blinkColor.ValueRW.Value = blink.ValueRO.ResetColor;
+                    }
+
                     ecb.RemoveComponent<BlinkAnimation>(entity);
                     continue;
                 }

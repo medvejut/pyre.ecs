@@ -8,5 +8,6 @@ namespace Pyre.Animations.Components
         public float MaxScale;
         public float BaseFrequency;
         public float MaxFrequency;
+        public bool ResetOnFinish;
     }
 }

@@ -14,7 +14,7 @@ namespace Pyre.Animations.Components
         public float TotalDuration;
         public float ElapsedTime;
 
-        // Captured when the animation starts, restored when it finishes.
+        public bool ResetOnFinish;
         public float4 ResetColor;
     }
 }

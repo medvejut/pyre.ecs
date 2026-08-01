@@ -63,6 +63,7 @@ namespace Pyre.Gameplay.Systems
                         MaxScale = pulseAnimationSource.MaxScale,
                         BaseFrequency = pulseAnimationSource.BaseFrequency,
                         MaxFrequency = pulseAnimationSource.MaxFrequency,
+                        ResetOnFinish = pulseAnimationSource.ResetOnFinish,
 
                         TotalDuration = delay,
                         ElapsedTime = 0f,
@@ -79,6 +80,7 @@ namespace Pyre.Gameplay.Systems
                         MaxOpacity = blinkAnimationSource.MaxOpacity,
                         BaseFrequency = blinkAnimationSource.BaseFrequency,
                         MaxFrequency = blinkAnimationSource.MaxFrequency,
+                        ResetOnFinish = blinkAnimationSource.ResetOnFinish,
 
                         TotalDuration = delay,
                         ElapsedTime = 0f,

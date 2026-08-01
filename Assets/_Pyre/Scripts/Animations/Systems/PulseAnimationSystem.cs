@@ -26,8 +26,10 @@ namespace Pyre.Animations.Systems
             foreach (var (pulse, transform, entity) in
                      SystemAPI.Query<RefRW<PulseAnimation>, RefRW<LocalTransform>>().WithEntityAccess())
             {
-                if (pulse.ValueRO.ElapsedTime <= 0f)
+                if (pulse.ValueRO.ResetOnFinish && pulse.ValueRO.ElapsedTime <= 0f)
+                {
                     pulse.ValueRW.ResetScale = transform.ValueRO.Scale;
+                }
 
                 pulse.ValueRW.ElapsedTime += deltaTime;
 
@@ -36,7 +38,11 @@ namespace Pyre.Animations.Systems
 
                 if (elapsed >= totalDuration)
                 {
-                    transform.ValueRW.Scale = pulse.ValueRO.ResetScale;
+                    if (pulse.ValueRO.ResetOnFinish)
+                    {
+                        transform.ValueRW.Scale = pulse.ValueRO.ResetScale;
+                    }
+
                     ecb.RemoveComponent<PulseAnimation>(entity);
                     continue;
                 }

@@ -25,6 +25,7 @@ namespace Pyre.Animations.Components
                     MaxScale = authoring.Config.maxScale,
                     BaseFrequency = authoring.Config.baseFrequency,
                     MaxFrequency = authoring.Config.maxFrequency,
+                    ResetOnFinish = authoring.Config.resetOnFinish,
                 });
             }
         }
