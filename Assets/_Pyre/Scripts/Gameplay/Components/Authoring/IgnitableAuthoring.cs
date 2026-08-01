@@ -33,8 +33,12 @@ namespace Pyre.Gameplay.Components
 
         private void OnDrawGizmosSelected()
         {
+            // Origins sit at the model's feet, so draw from the collider center to match the runtime query.
+            var bodyCollider = GetComponentInChildren<Collider>();
+            var center = bodyCollider ? bodyCollider.bounds.center : transform.position;
+
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, burningRadius);
+            Gizmos.DrawWireSphere(center, burningRadius);
         }
     }
 }

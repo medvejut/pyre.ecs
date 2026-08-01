@@ -1,4 +1,5 @@
 ﻿using Pyre.Gameplay.Components;
+using Pyre.Gameplay.Utils;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -36,6 +37,8 @@ namespace Pyre.Gameplay.Systems
             var ignitableLookup = SystemAPI.GetComponentLookup<Ignitable>(true);
             var burningLookup = SystemAPI.GetComponentLookup<Burning>(true);
 
+            var hits = new NativeList<DistanceHit>(Allocator.Temp);
+
             foreach (var (ltw, burning, entity) in SystemAPI
                          .Query<RefRO<LocalToWorld>, RefRO<Burning>>()
                          .WithEntityAccess())
@@ -43,11 +46,11 @@ namespace Pyre.Gameplay.Systems
                 if (!burning.ValueRO.CanSpreadHeat)
                     continue;
 
-                var hits = new NativeList<DistanceHit>(Allocator.Temp);
+                hits.Clear();
 
                 var input = new PointDistanceInput
                 {
-                    Position = ltw.ValueRO.Position,
+                    Position = BodyCenter.Get(physicsWorld, entity, ltw.ValueRO),
                     MaxDistance = burning.ValueRO.HeatRadius,
                     Filter = CollisionFilter.Default
                 };
@@ -65,9 +68,9 @@ namespace Pyre.Gameplay.Systems
                         }
                     }
                 }
-
-                hits.Dispose();
             }
+
+            hits.Dispose();
         }
 
         [BurstCompile]

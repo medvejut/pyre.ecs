@@ -81,6 +81,8 @@ namespace Pyre.Debug
 
                         var body = physicsWorld.Bodies[rigidBodyIndex];
 
+                        // Mirrors FireExtinguishingSystem.CastRigidbody: fed the origin on purpose, since
+                        // the collider itself already carries the offset for the foot-level pivot.
                         var input = new ColliderCastInput(body.Collider, burningLtw.ValueRO.Position, burningLtw.ValueRO.Position);
                         if (physicsWorld.CastCollider(input, ref hits))
                         {
