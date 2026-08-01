@@ -13,5 +13,8 @@ namespace Pyre.Animations.Components
         public float MaxFrequency;
         public float TotalDuration;
         public float ElapsedTime;
+
+        // Captured when the animation starts, restored when it finishes.
+        public float4 ResetColor;
     }
 }
