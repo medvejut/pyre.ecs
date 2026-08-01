@@ -50548,7 +50548,7 @@ GameObject:
   - component: {fileID: 2057456345}
   - component: {fileID: 2057456346}
   m_Layer: 0
-  m_Name: '[ Audio Defaults ]'
+  m_Name: '[ Config ]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50578,10 +50578,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2057456344}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d9915e28b3a59546a944ace62456329, type: 3}
+  m_Script: {fileID: 11500000, guid: 4a276aac2066af243aa1f4614390d442, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Audio.AudioDefaultsAuthoring
-  extinguishClip: {fileID: 8300000, guid: 39916f36cd3ed6c4bb186ab286ca2d47, type: 3}
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Gameplay.Components.GameConfigAuthoring
+  Config: {fileID: 11400000, guid: 2e8c5863887f9c74aab07fe89f3f31f2, type: 2}
 --- !u!1001 &2060748016
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -8,16 +8,25 @@ namespace Pyre.Gameplay.Systems
     public partial struct KnockbackVelocityDumpingSystem : ISystem
     {
         [BurstCompile]
+        public void OnCreate(ref SystemState state)
+        {
+            state.RequireForUpdate<KnockbackSettings>();
+        }
+
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            const float linearDumping = 3f;
-            const float angularDumping = 5f;
+            var settings = SystemAPI.GetSingleton<KnockbackSettings>();
+            var deltaTime = SystemAPI.Time.DeltaTime;
+
+            var linearDecay = math.exp(-settings.LinearDamping * deltaTime);
+            var angularDecay = math.exp(-settings.AngularDamping * deltaTime);
 
             foreach (var knockbackVelocity in SystemAPI
                          .Query<RefRW<KnockbackVelocity>>())
             {
-                knockbackVelocity.ValueRW.Linear *= math.exp(-linearDumping * SystemAPI.Time.DeltaTime);
-                knockbackVelocity.ValueRW.Angular *= math.exp(-angularDumping * SystemAPI.Time.DeltaTime);
+                knockbackVelocity.ValueRW.Linear *= linearDecay;
+                knockbackVelocity.ValueRW.Angular *= angularDecay;
             }
         }
     }

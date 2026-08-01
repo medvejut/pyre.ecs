@@ -15,6 +15,8 @@ namespace Pyre.Animations.Components
         {
             public override void Bake(LightBlinkAnimationAuthoring authoring)
             {
+                DependsOn(authoring.Config);
+
                 if (authoring.Config == null)
                     return;
 

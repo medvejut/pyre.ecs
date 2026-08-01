@@ -14,12 +14,14 @@ namespace Pyre.Player.Systems
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<PlayerTag>();
+            state.RequireForUpdate<MoveInputSettings>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             var deltaTime = SystemAPI.Time.DeltaTime;
+            var inputToWorld = SystemAPI.GetSingleton<MoveInputSettings>().InputToWorld;
 
             foreach (var (input, movement, velocity, localTransform, entity) in SystemAPI
                          .Query<RefRO<PlayerMoveInput>, RefRO<PlayerMovement>, RefRW<PhysicsVelocity>, RefRW<LocalTransform>>()
@@ -27,7 +29,7 @@ namespace Pyre.Player.Systems
                          .WithEntityAccess())
             {
                 var moveInput = input.ValueRO.Value;
-                var worldDirection = math.rotate(movement.ValueRO.IsometricRotation, new float3(moveInput.x, 0f, moveInput.y));
+                var worldDirection = math.rotate(inputToWorld, new float3(moveInput.x, 0f, moveInput.y));
 
                 var movementVelocity = float3.zero;
 

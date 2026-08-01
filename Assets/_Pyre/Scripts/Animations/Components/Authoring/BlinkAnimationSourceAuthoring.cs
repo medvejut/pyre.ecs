@@ -13,6 +13,8 @@ namespace Pyre.Animations.Components
         {
             public override void Bake(BlinkAnimationSourceAuthoring authoring)
             {
+                DependsOn(authoring.Config);
+
                 if (authoring.Config == null)
                     return;
 
