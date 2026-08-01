@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.VFX;
 using Random = Unity.Mathematics.Random;
 
-namespace Pyre.Debug
+namespace Pyre.Debugging
 {
     public partial struct DebugActionsSystem : ISystem
     {
@@ -51,7 +51,7 @@ namespace Pyre.Debug
             {
                 foreach (var vfx in SystemAPI.Query<SystemAPI.ManagedAPI.UnityEngineComponent<VisualEffect>>())
                 {
-                    UnityEngine.Debug.Log($"VFX: {vfx.Value.name}");
+                    Debug.Log($"VFX: {vfx.Value.name}");
                     if (_toggleVfx)
                     {
                         vfx.Value.Stop();
@@ -73,7 +73,7 @@ namespace Pyre.Debug
                              .Query<RefRO<LocalToWorld>, RefRO<Burning>>()
                              .WithEntityAccess())
                 {
-                    UnityEngine.Debug.Log($"Checking for water hit for entity {entity}");
+                    Debug.Log($"Checking for water hit for entity {entity}");
                     var rigidBodyIndex = physicsWorld.GetRigidBodyIndex(entity);
                     if (rigidBodyIndex != -1)
                     {
@@ -87,10 +87,10 @@ namespace Pyre.Debug
                             foreach (var hit in hits)
                             {
                                 var collideWater = SystemAPI.HasComponent<Water>(hit.Entity);
-                                UnityEngine.Debug.Log($"Hit detected for entity {entity} with {hit.Entity} {collideWater}");
+                                Debug.Log($"Hit detected for entity {entity} with {hit.Entity} {collideWater}");
                                 if (collideWater)
                                 {
-                                    UnityEngine.Debug.Log($"Water hit detected for entity {entity} with {hit.Entity}");
+                                    Debug.Log($"Water hit detected for entity {entity} with {hit.Entity}");
                                 }
                             }
                         }
@@ -150,13 +150,13 @@ namespace Pyre.Debug
 
                 foreach (var type in componentTypes)
                 {
-                    UnityEngine.Debug.Log($"Component: {type.GetManagedType().Name} IsManagedComponent={type.IsManagedComponent} IsComponent={type.IsComponent} ToString={type.ToString()}");
+                    Debug.Log($"Component: {type.GetManagedType().Name} IsManagedComponent={type.IsManagedComponent} IsComponent={type.IsComponent} ToString={type.ToString()}");
                 }
 
                 componentTypes.Dispose();
 
                 var audioSource = SystemAPI.ManagedAPI.GetComponent<AudioSource>(entity);
-                UnityEngine.Debug.Log($"AudioSource: {audioSource.clip.name} IsPlaying={audioSource.isPlaying} Volume={audioSource.volume}");
+                Debug.Log($"AudioSource: {audioSource.clip.name} IsPlaying={audioSource.isPlaying} Volume={audioSource.volume}");
             }
 
             if (Keyboard.current?.bKey.wasPressedThisFrame == true)
@@ -165,7 +165,7 @@ namespace Pyre.Debug
                          SystemAPI.Query<RefRO<Explosive>>().WithNone<Burning>().WithEntityAccess())
                 {
                     state.EntityManager.GetName(entity, out var name);
-                    UnityEngine.Debug.Log($"Adding Burning component to entity {entity} with name {name}");
+                    Debug.Log($"Adding Burning component to entity {entity} with name {name}");
 
                     ecb.AddComponent(entity, new Burning { HeatRadius = 0 });
                 }

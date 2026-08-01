@@ -16,7 +16,7 @@ namespace Pyre.Gameplay.Components
 
                 if (authoring.Config == null)
                 {
-                    UnityEngine.Debug.LogError($"No GameConfig assigned on '{authoring.name}'. " +
+                    Debug.LogError($"No GameConfig assigned on '{authoring.name}'. " +
                                    "Systems depending on game settings will not run.", authoring);
                     return;
                 }
