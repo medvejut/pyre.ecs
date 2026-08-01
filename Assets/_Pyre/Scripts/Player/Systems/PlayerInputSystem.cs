@@ -1,4 +1,3 @@
-using Pyre.Gameplay.Components;
 using Pyre.Player.Components;
 using Unity.Entities;
 using Unity.Mathematics;
