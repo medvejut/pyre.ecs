@@ -10,5 +10,8 @@ namespace Pyre.Animations.Components
         public float MaxFrequency;
         public float TotalDuration;
         public float ElapsedTime;
+
+        public bool ResetOnFinish;
+        public float ResetScale;
     }
 }

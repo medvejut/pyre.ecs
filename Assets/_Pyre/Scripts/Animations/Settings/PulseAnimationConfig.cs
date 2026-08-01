@@ -9,5 +9,7 @@ namespace Pyre.Animations.Settings
         public float maxScale = 1.1f;
         public float baseFrequency = 1f;
         public float maxFrequency = 4f;
+
+        public bool resetOnFinish = true;
     }
 }

@@ -31,6 +31,7 @@ namespace Pyre.Animations.Components
                     MaxOpacity = authoring.Config.maxOpacity,
                     BaseFrequency = authoring.Config.baseFrequency,
                     MaxFrequency = authoring.Config.maxFrequency,
+                    ResetOnFinish = authoring.Config.resetOnFinish,
                 });
             }
         }
