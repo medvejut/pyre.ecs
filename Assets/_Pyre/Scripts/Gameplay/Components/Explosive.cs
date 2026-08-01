@@ -16,7 +16,6 @@ namespace Pyre.Gameplay.Components
         public float CustomExplosionAngularImpulseMultiplier;
         public uint CustomExplosionAngularImpulseRandomSeed;
 
-        public UnityObjectRef<AudioClip> ExplosionClip;
         public Entity TickAudioSourceEntity;
 
         public UnityObjectRef<ParticleSystem> ExplosionVfx;

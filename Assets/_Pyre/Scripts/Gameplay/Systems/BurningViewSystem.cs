@@ -1,4 +1,5 @@
-﻿using Pyre.Audio.Components;
+﻿using Pyre.Audio;
+using Pyre.Audio.Components;
 using Pyre.Gameplay.Components;
 using Unity.Burst;
 using Unity.Entities;
@@ -10,19 +11,28 @@ namespace Pyre.Gameplay.Systems
 {
     public partial struct BurningViewSystem : ISystem
     {
+        private BufferLookup<SoundClipOverride> _soundClipOverrideLookup;
+        private BufferLookup<MutedSound> _mutedSoundLookup;
+
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
+
+            _soundClipOverrideLookup = state.GetBufferLookup<SoundClipOverride>(isReadOnly: true);
+            _mutedSoundLookup = state.GetBufferLookup<MutedSound>(isReadOnly: true);
         }
 
         public void OnUpdate(ref SystemState state)
         {
+            UpdateLookups(ref state);
+
             var ecb = SystemAPI
                 .GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
             var soundEventBuffer = SystemAPI.GetSingletonBuffer<SoundEvent>(isReadOnly: false);
+            SystemAPI.TryGetSingletonBuffer<DefaultSoundClip>(out var soundDefaults, isReadOnly: true);
 
             foreach (var (burningView, ltw, entity) in SystemAPI
                          .Query<RefRO<BurningView>, RefRO<LocalToWorld>>()
@@ -40,7 +50,7 @@ namespace Pyre.Gameplay.Systems
                 {
                     ecb.RemoveComponent<DisableRendering>(burningView.ValueRO.FireEntity);
 
-                    PlaySound(ref state, entity, ltw, soundEventBuffer);
+                    SoundClipUtility.Queue(SoundKind.Burn, entity, ltw.ValueRO.Position, 0f, _soundClipOverrideLookup, _mutedSoundLookup, soundDefaults, soundEventBuffer);
                 }
                 else
                 {
@@ -63,24 +73,10 @@ namespace Pyre.Gameplay.Systems
             }
         }
 
-        private void PlaySound(ref SystemState state, Entity entity, RefRO<LocalToWorld> ltw, DynamicBuffer<SoundEvent> soundEventBuffer)
+        private void UpdateLookups(ref SystemState state)
         {
-            if (SystemAPI.HasComponent<MuteBurnSound>(entity))
-                return;
-
-            if (SystemAPI.HasBuffer<BurnSoundClip>(entity))
-            {
-                var burnSoundClips = SystemAPI.GetBuffer<BurnSoundClip>(entity);
-                foreach (var burnSoundClip in burnSoundClips)
-                {
-                    soundEventBuffer.Add(new SoundEvent { Position = ltw.ValueRO.Position, Clip = burnSoundClip.Clip, SpatialBlend = 0f });
-                }
-            }
-
-            if (SystemAPI.TryGetComponent<Ignitable>(entity, out var ignitable) && ignitable.OnBurnClip)
-            {
-                soundEventBuffer.Add(new SoundEvent { Position = ltw.ValueRO.Position, Clip = ignitable.OnBurnClip, SpatialBlend = 0f });
-            }
+            _soundClipOverrideLookup.Update(ref state);
+            _mutedSoundLookup.Update(ref state);
         }
     }
 }

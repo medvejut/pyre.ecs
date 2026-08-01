@@ -17,8 +17,8 @@ MonoBehaviour:
   knockback:
     LinearDamping: 3
     AngularDamping: 5
-  audioDefaults:
-    ExtinguishClip:
-      Id:
-        entityId:
-          m_rawData: 568105584918874514
+  soundDefaults:
+    BurnClip: {fileID: 0}
+    BurningLoopClip: {fileID: 0}
+    ExtinguishClip: {fileID: 8300000, guid: 39916f36cd3ed6c4bb186ab286ca2d47, type: 3}
+    ExplodeClip: {fileID: 0}

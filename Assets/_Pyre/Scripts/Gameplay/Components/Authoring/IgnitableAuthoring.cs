@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using Pyre.Audio.Components;
+using Unity.Entities;
 using UnityEngine;
 
 namespace Pyre.Gameplay.Components
@@ -22,12 +23,24 @@ namespace Pyre.Gameplay.Components
                 {
                     BurningRadius = authoring.burningRadius,
                     IgnitionTime = authoring.ignitionTime,
-                    CoolingRate = authoring.coolingRate,
-                    OnBurnClip = authoring.igniteClip,
-                    LoopClip = authoring.loopClip,
-                    ExtinguishClip = authoring.extinguishClip
+                    CoolingRate = authoring.coolingRate
                 });
                 AddComponent(entity, new IgnitionProgress { Elapsed = 0f });
+
+                if (authoring.igniteClip)
+                {
+                    AppendToBuffer(entity, new SoundClipOverride { Kind = SoundKind.Burn, Clip = authoring.igniteClip });
+                }
+
+                if (authoring.loopClip)
+                {
+                    AppendToBuffer(entity, new SoundClipOverride { Kind = SoundKind.BurningLoop, Clip = authoring.loopClip });
+                }
+
+                if (authoring.extinguishClip)
+                {
+                    AppendToBuffer(entity, new SoundClipOverride { Kind = SoundKind.Extinguish, Clip = authoring.extinguishClip });
+                }
             }
         }
 

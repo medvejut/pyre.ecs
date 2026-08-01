@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using Pyre.Audio.Components;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -46,11 +47,15 @@ namespace Pyre.Gameplay.Components
                     ExplosionImpulse = authoring.ExplosionImpulse,
                     ExplosionOffset = authoring.ExplosionOffset,
 
-                    ExplosionClip = authoring.ExplosionClip,
                     TickAudioSourceEntity = authoring.TickAudioSource ? GetEntity(authoring.TickAudioSource, TransformUsageFlags.Dynamic) : Entity.Null,
 
                     ExplosionVfx = authoring.ExplosionVfx
                 });
+
+                if (authoring.ExplosionClip)
+                {
+                    AppendToBuffer(entity, new SoundClipOverride { Kind = SoundKind.Explode, Clip = authoring.ExplosionClip });
+                }
             }
         }
     }

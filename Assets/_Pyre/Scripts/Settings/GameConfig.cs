@@ -1,3 +1,4 @@
+using Pyre.Audio.Components;
 using Pyre.Gameplay.Components;
 using UnityEngine;
 
@@ -10,6 +11,6 @@ namespace Pyre.Settings
 
         public KnockbackSettings knockback = new() { LinearDamping = 3f, AngularDamping = 5f };
 
-        public AudioDefaults audioDefaults;
+        public SoundDefaults soundDefaults;
     }
 }

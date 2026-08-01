@@ -1,3 +1,4 @@
+using Pyre.Audio.Components;
 using Unity.Entities;
 using UnityEngine;
 
@@ -13,10 +14,12 @@ namespace Pyre.Gameplay.Components
             {
                 var entity = GetEntity(TransformUsageFlags.None);
 
-                var buffer = AddBuffer<BurnSoundClip>(entity);
                 foreach (var clip in authoring.clips)
                 {
-                    buffer.Add(new BurnSoundClip { Clip = clip });
+                    if (clip)
+                    {
+                        AppendToBuffer(entity, new SoundClipOverride { Kind = SoundKind.Burn, Clip = clip });
+                    }
                 }
             }
         }

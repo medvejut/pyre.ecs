@@ -1,4 +1,5 @@
-﻿using Pyre.Audio.Components;
+using Pyre.Audio;
+using Pyre.Audio.Components;
 using Pyre.Gameplay.Components;
 using Unity.Burst;
 using Unity.Collections;
@@ -13,18 +14,19 @@ namespace Pyre.Gameplay.Systems
     {
         private ComponentLookup<Water> _waterLookup;
         private ComponentLookup<IgnitionProgress> _ignitionProgressLookup;
-        private ComponentLookup<Ignitable> _ignitableLookup;
+        private BufferLookup<SoundClipOverride> _soundClipOverrideLookup;
+        private BufferLookup<MutedSound> _mutedSoundLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
-            state.RequireForUpdate<AudioDefaults>();
 
             _waterLookup = state.GetComponentLookup<Water>(isReadOnly: true);
             _ignitionProgressLookup = state.GetComponentLookup<IgnitionProgress>(isReadOnly: false);
-            _ignitableLookup = state.GetComponentLookup<Ignitable>(isReadOnly: true);
+            _soundClipOverrideLookup = state.GetBufferLookup<SoundClipOverride>(isReadOnly: true);
+            _mutedSoundLookup = state.GetBufferLookup<MutedSound>(isReadOnly: true);
         }
 
         [BurstCompile]
@@ -37,8 +39,8 @@ namespace Pyre.Gameplay.Systems
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
             var physicsWorld = SystemAPI.GetSingleton<PhysicsWorldSingleton>();
-            var audioDefaults = SystemAPI.GetSingleton<AudioDefaults>();
             var soundEventBuffer = SystemAPI.GetSingletonBuffer<SoundEvent>(isReadOnly: false);
+            SystemAPI.TryGetSingletonBuffer<DefaultSoundClip>(out var soundDefaults, isReadOnly: true);
 
             foreach (var (burningLtw, burning, entity) in SystemAPI
                          .Query<RefRO<LocalToWorld>, RefRO<Burning>>()
@@ -52,14 +54,14 @@ namespace Pyre.Gameplay.Systems
                     var body = physicsWorld.Bodies[rigidBodyIndex];
                     if (CastRigidbody(body, position, physicsWorld))
                     {
-                        Extinguish(entity, position, ecb, audioDefaults, soundEventBuffer);
+                        Extinguish(entity, position, ecb, soundDefaults, soundEventBuffer);
                     }
                 }
                 else
                 {
                     if (CastPoint(entity, position, physicsWorld))
                     {
-                        Extinguish(entity, position, ecb, audioDefaults, soundEventBuffer);
+                        Extinguish(entity, position, ecb, soundDefaults, soundEventBuffer);
                     }
                 }
             }
@@ -69,7 +71,8 @@ namespace Pyre.Gameplay.Systems
         {
             _waterLookup.Update(ref state);
             _ignitionProgressLookup.Update(ref state);
-            _ignitableLookup.Update(ref state);
+            _soundClipOverrideLookup.Update(ref state);
+            _mutedSoundLookup.Update(ref state);
         }
 
         private bool CastRigidbody(RigidBody body, float3 position, PhysicsWorldSingleton physicsWorld)
@@ -128,7 +131,7 @@ namespace Pyre.Gameplay.Systems
             return result;
         }
 
-        private void Extinguish(Entity entity, float3 position, EntityCommandBuffer ecb, AudioDefaults audioDefaults, DynamicBuffer<SoundEvent> soundEventBuffer)
+        private void Extinguish(Entity entity, float3 position, EntityCommandBuffer ecb, DynamicBuffer<DefaultSoundClip> soundDefaults, DynamicBuffer<SoundEvent> soundEventBuffer)
         {
             ecb.RemoveComponent<Burning>(entity);
 
@@ -137,11 +140,7 @@ namespace Pyre.Gameplay.Systems
                 ecb.SetComponent(entity, new IgnitionProgress { Elapsed = 0f });
             }
 
-            var clip = _ignitableLookup.TryGetComponent(entity, out var ignitable) && ignitable.ExtinguishClip
-                ? ignitable.ExtinguishClip
-                : audioDefaults.ExtinguishClip;
-
-            soundEventBuffer.Add(new SoundEvent { Position = position, Clip = clip, SpatialBlend = 0f });
+            SoundClipUtility.Queue(SoundKind.Extinguish, entity, position, 0f, _soundClipOverrideLookup, _mutedSoundLookup, soundDefaults, soundEventBuffer);
         }
     }
 }
