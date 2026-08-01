@@ -33,8 +33,11 @@ namespace Pyre.Gameplay.Components
 
         private void OnDrawGizmosSelected()
         {
+            var bodyCollider = GetComponentInChildren<Collider>();
+            var center = bodyCollider ? bodyCollider.bounds.center : transform.position;
+
             Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(transform.position, burningRadius);
+            Gizmos.DrawWireSphere(center, burningRadius);
         }
     }
 }

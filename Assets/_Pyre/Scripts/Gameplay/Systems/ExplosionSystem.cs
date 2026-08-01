@@ -1,6 +1,7 @@
 ﻿using Pyre.Audio.Components;
 using Pyre.Cameras.Components;
 using Pyre.Gameplay.Components;
+using Pyre.Gameplay.Utils;
 using Pyre.Effects.Components;
 using Unity.Burst;
 using Unity.Collections;
@@ -60,7 +61,7 @@ namespace Pyre.Gameplay.Systems
                     foreach (var hit in hits)
                     {
                         DestroyHitEntity(hit.Entity, ecb);
-                        TryKickBody(hit.Entity, explosion.ValueRO);
+                        TryKickBody(hit.Entity, explosion.ValueRO, physicsWorld);
                         TryBurnEntity(hit.Entity, ecb);
                         cameraShakeBuffer.Add(new CameraShakeEvent());
                     }
@@ -98,7 +99,7 @@ namespace Pyre.Gameplay.Systems
             }
         }
 
-        private void TryKickBody(Entity hitEntity, in Explosion explosion)
+        private void TryKickBody(Entity hitEntity, in Explosion explosion, in PhysicsWorldSingleton physicsWorld)
         {
             if (!_velocityLookup.HasComponent(hitEntity) || !_massLookup.HasComponent(hitEntity) || !_ltwLookup.HasComponent(hitEntity))
                 return;
@@ -107,7 +108,7 @@ namespace Pyre.Gameplay.Systems
             var mass = _massLookup[hitEntity];
             var ltw = _ltwLookup[hitEntity];
 
-            var position = ltw.Position;
+            var position = BodyCenter.GetWorldPosition(physicsWorld, hitEntity, ltw);
             var direction = math.normalizesafe(position - explosion.Position);
 
             var distance = math.distance(position, explosion.Position);
