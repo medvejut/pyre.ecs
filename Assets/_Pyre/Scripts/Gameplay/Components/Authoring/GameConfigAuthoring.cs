@@ -1,4 +1,3 @@
-using Pyre.Audio.Components;
 using Pyre.Settings;
 using Unity.Entities;
 using UnityEngine;
@@ -26,8 +25,7 @@ namespace Pyre.Gameplay.Components
 
                 AddComponent(entity, authoring.Config.moveInput);
                 AddComponent(entity, authoring.Config.knockback);
-
-                authoring.Config.soundDefaults.Populate(AddBuffer<DefaultSoundClip>(entity));
+                AddComponent(entity, new AudioDefaults { ExtinguishSound = authoring.Config.extinguishSound });
             }
         }
     }

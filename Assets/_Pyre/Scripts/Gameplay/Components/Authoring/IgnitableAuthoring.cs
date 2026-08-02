@@ -1,4 +1,4 @@
-﻿using Pyre.Audio.Components;
+using Pyre.Audio;
 using Unity.Entities;
 using UnityEngine;
 
@@ -10,9 +10,9 @@ namespace Pyre.Gameplay.Components
         [SerializeField] private float ignitionTime = 1f;
         [SerializeField] private float coolingRate = 0.5f;
         [Space]
-        [SerializeField] private AudioClip igniteClip;
-        [SerializeField] private AudioClip loopClip;
-        [SerializeField] private AudioClip extinguishClip;
+        [SerializeField] private SoundClipSet igniteSound;
+        [SerializeField] private SoundClipSet loopSound;
+        [SerializeField] private SoundClipSet extinguishSound;
 
         public class IgnitableBaker : Baker<IgnitableAuthoring>
         {
@@ -23,24 +23,12 @@ namespace Pyre.Gameplay.Components
                 {
                     BurningRadius = authoring.burningRadius,
                     IgnitionTime = authoring.ignitionTime,
-                    CoolingRate = authoring.coolingRate
+                    CoolingRate = authoring.coolingRate,
+                    IgniteSound = authoring.igniteSound,
+                    LoopSound = authoring.loopSound,
+                    ExtinguishSound = authoring.extinguishSound
                 });
                 AddComponent(entity, new IgnitionProgress { Elapsed = 0f });
-
-                if (authoring.igniteClip)
-                {
-                    AppendToBuffer(entity, new SoundClipOverride { Kind = SoundKind.Burn, Clip = authoring.igniteClip });
-                }
-
-                if (authoring.loopClip)
-                {
-                    AppendToBuffer(entity, new SoundClipOverride { Kind = SoundKind.BurningLoop, Clip = authoring.loopClip });
-                }
-
-                if (authoring.extinguishClip)
-                {
-                    AppendToBuffer(entity, new SoundClipOverride { Kind = SoundKind.Extinguish, Clip = authoring.extinguishClip });
-                }
             }
         }
 

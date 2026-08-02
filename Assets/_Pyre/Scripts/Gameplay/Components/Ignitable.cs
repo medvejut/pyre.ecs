@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+using Pyre.Audio;
+using Unity.Entities;
 
 namespace Pyre.Gameplay.Components
 {
@@ -7,5 +8,9 @@ namespace Pyre.Gameplay.Components
         public float BurningRadius;
         public float IgnitionTime;
         public float CoolingRate;
+
+        public UnityObjectRef<SoundClipSet> IgniteSound;
+        public UnityObjectRef<SoundClipSet> LoopSound;
+        public UnityObjectRef<SoundClipSet> ExtinguishSound;
     }
 }

@@ -1,4 +1,4 @@
-﻿using Pyre.Audio.Components;
+﻿using Pyre.Audio;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -17,7 +17,7 @@ namespace Pyre.Gameplay.Components
         public float CustomExplosionAngularImpulseMultiplier = 5f;
         public uint CustomExplosionAngularImpulseRandomSeed = 2;
         [Space]
-        public AudioClip ExplosionClip;
+        public SoundClipSet ExplosionSound;
         public AudioSource TickAudioSource;
         [Space]
         public ParticleSystem ExplosionVfx;
@@ -47,15 +47,11 @@ namespace Pyre.Gameplay.Components
                     ExplosionImpulse = authoring.ExplosionImpulse,
                     ExplosionOffset = authoring.ExplosionOffset,
 
+                    ExplosionSound = authoring.ExplosionSound,
                     TickAudioSourceEntity = authoring.TickAudioSource ? GetEntity(authoring.TickAudioSource, TransformUsageFlags.Dynamic) : Entity.Null,
 
                     ExplosionVfx = authoring.ExplosionVfx
                 });
-
-                if (authoring.ExplosionClip)
-                {
-                    AppendToBuffer(entity, new SoundClipOverride { Kind = SoundKind.Explode, Clip = authoring.ExplosionClip });
-                }
             }
         }
     }

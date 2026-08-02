@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 9086540447593207639}
   - component: {fileID: 5939300276877087423}
   - component: {fileID: 2439770040294099401}
-  - component: {fileID: 4298715697656266717}
   - component: {fileID: 2463432266223189769}
   m_Layer: 0
   m_Name: Enemy
@@ -117,24 +116,9 @@ MonoBehaviour:
   burningRadius: 1.5
   ignitionTime: 1
   coolingRate: 0.5
-  igniteClip: {fileID: 0}
-  loopClip: {fileID: 8300000, guid: a9691dd2c75dd7b4f883c0ae4289b651, type: 3}
-  extinguishClip: {fileID: 0}
---- !u!114 &4298715697656266717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2271439429579291909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d7cbd2dcdb161064e94f7ed04434ab60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.CustomBurnSoundAuthoring
-  clips:
-  - {fileID: 8300000, guid: 10343cfbf48056a44bdc53061f0aeef1, type: 3}
-  - {fileID: 8300000, guid: 2f1cd58f251a17748aa33b8e0066bf02, type: 3}
+  igniteSound: {fileID: 11400000, guid: fc5fb2a49bf84a3980b2e4aced47ca7d, type: 2}
+  loopSound: {fileID: 11400000, guid: 3dc045f7047e48e5a141beb84fc1547c, type: 2}
+  extinguishSound: {fileID: 0}
 --- !u!114 &2463432266223189769
 MonoBehaviour:
   m_ObjectHideFlags: 0

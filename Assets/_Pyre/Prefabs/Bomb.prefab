@@ -447,9 +447,9 @@ MonoBehaviour:
   burningRadius: 0
   ignitionTime: 1
   coolingRate: 0.5
-  igniteClip: {fileID: 0}
-  loopClip: {fileID: 8300000, guid: a9691dd2c75dd7b4f883c0ae4289b651, type: 3}
-  extinguishClip: {fileID: 0}
+  igniteSound: {fileID: 0}
+  loopSound: {fileID: 11400000, guid: 3dc045f7047e48e5a141beb84fc1547c, type: 2}
+  extinguishSound: {fileID: 0}
 --- !u!114 &7682216173049835053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -498,7 +498,7 @@ MonoBehaviour:
     z: 0.5
   CustomExplosionAngularImpulseMultiplier: 5
   CustomExplosionAngularImpulseRandomSeed: 6
-  ExplosionClip: {fileID: 8300000, guid: c297b92dd106571459f21dfd3f45568e, type: 3}
+  ExplosionSound: {fileID: 11400000, guid: 3ef4a8c44ec443588bafc1f83725d9a9, type: 2}
   TickAudioSource: {fileID: 3372427359875174172}
   ExplosionVfx: {fileID: 971865183275190236, guid: 26dc1a2de20161b4fbc2edde19cdebf7, type: 3}
 --- !u!114 &5939108989042684116

@@ -299,9 +299,9 @@ MonoBehaviour:
   burningRadius: 1.7
   ignitionTime: 1
   coolingRate: 0.2
-  igniteClip: {fileID: 8300000, guid: 10343cfbf48056a44bdc53061f0aeef1, type: 3}
-  loopClip: {fileID: 8300000, guid: a9691dd2c75dd7b4f883c0ae4289b651, type: 3}
-  extinguishClip: {fileID: 0}
+  igniteSound: {fileID: 11400000, guid: c9bc9e54a27b4e9aa3de85cd64790dce, type: 2}
+  loopSound: {fileID: 11400000, guid: 3dc045f7047e48e5a141beb84fc1547c, type: 2}
+  extinguishSound: {fileID: 0}
 --- !u!114 &6685625062363387980
 MonoBehaviour:
   m_ObjectHideFlags: 0

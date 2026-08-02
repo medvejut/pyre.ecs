@@ -1,6 +1,4 @@
-﻿using Pyre.Audio;
-using Pyre.Audio.Components;
-using Pyre.Gameplay.Components;
+﻿using Pyre.Gameplay.Components;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.Rendering;
@@ -10,27 +8,17 @@ namespace Pyre.Gameplay.Systems
 {
     public partial struct IgnitionProgressViewSystem : ISystem
     {
-        private BufferLookup<SoundClipOverride> _soundClipOverrideLookup;
-        private BufferLookup<MutedSound> _mutedSoundLookup;
-
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<EndSimulationEntityCommandBufferSystem.Singleton>();
-
-            _soundClipOverrideLookup = state.GetBufferLookup<SoundClipOverride>(isReadOnly: true);
-            _mutedSoundLookup = state.GetBufferLookup<MutedSound>(isReadOnly: true);
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            UpdateLookups(ref state);
-
             var ecb = SystemAPI
                 .GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
-
-            SystemAPI.TryGetSingletonBuffer<DefaultSoundClip>(out var soundDefaults, isReadOnly: true);
 
             foreach (var (view, ignitable, ignitionProgress, entity) in SystemAPI
                          .Query<RefRO<IgnitionProgressView>, RefRO<Ignitable>, RefRO<IgnitionProgress>>()
@@ -52,11 +40,12 @@ namespace Pyre.Gameplay.Systems
 
                     if (SystemAPI.ManagedAPI.TryGetComponent(view.ValueRO.ProgressEntity, out AudioSource audioSource))
                     {
-                        var loopClip = SoundClipUtility.Resolve(SoundKind.BurningLoop, entity, _soundClipOverrideLookup, soundDefaults);
+                        // Луп по природе одиночный — из набора берётся первый клип.
+                        var loopSound = ignitable.ValueRO.LoopSound.Value;
 
-                        if (shouldRender && loopClip && !SoundClipUtility.IsMuted(SoundKind.BurningLoop, entity, _mutedSoundLookup))
+                        if (shouldRender && loopSound && loopSound.clips.Length > 0)
                         {
-                            audioSource.clip = loopClip;
+                            audioSource.clip = loopSound.clips[0];
                             audioSource.loop = true;
                             audioSource.Play();
                         }
@@ -73,12 +62,6 @@ namespace Pyre.Gameplay.Systems
                     SystemAPI.SetComponent(view.ValueRO.ProgressEntity, progressMaterialProperty);
                 }
             }
-        }
-
-        private void UpdateLookups(ref SystemState state)
-        {
-            _soundClipOverrideLookup.Update(ref state);
-            _mutedSoundLookup.Update(ref state);
         }
 
         [BurstCompile]

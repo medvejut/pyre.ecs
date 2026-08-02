@@ -1,5 +1,4 @@
 ﻿using Pyre.Animations.Components;
-using Pyre.Audio;
 using Pyre.Audio.Components;
 using Pyre.Gameplay.Components;
 using Unity.Burst;
@@ -14,7 +13,6 @@ namespace Pyre.Gameplay.Systems
     {
         private ComponentLookup<PulseAnimationSource> _pulseAnimationSourceLookup;
         private ComponentLookup<BlinkAnimationSource> _blinkAnimationSourceLookup;
-        private BufferLookup<SoundClipOverride> _soundClipOverrideLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -22,7 +20,6 @@ namespace Pyre.Gameplay.Systems
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
             _pulseAnimationSourceLookup = state.GetComponentLookup<PulseAnimationSource>(isReadOnly: true);
             _blinkAnimationSourceLookup = state.GetComponentLookup<BlinkAnimationSource>(isReadOnly: true);
-            _soundClipOverrideLookup = state.GetBufferLookup<SoundClipOverride>(isReadOnly: true);
         }
 
         [BurstCompile]
@@ -30,7 +27,6 @@ namespace Pyre.Gameplay.Systems
         {
             _pulseAnimationSourceLookup.Update(ref state);
             _blinkAnimationSourceLookup.Update(ref state);
-            _soundClipOverrideLookup.Update(ref state);
 
             var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
@@ -97,8 +93,6 @@ namespace Pyre.Gameplay.Systems
         {
             var deltaTime = SystemAPI.Time.DeltaTime;
 
-            SystemAPI.TryGetSingletonBuffer<DefaultSoundClip>(out var soundDefaults, isReadOnly: true);
-
             foreach (var (explodeTimer, explosive, ltw, entity) in
                      SystemAPI.Query<RefRW<ExplodeTimer>, RefRO<Explosive>, RefRO<LocalToWorld>>()
                          .WithEntityAccess())
@@ -115,7 +109,7 @@ namespace Pyre.Gameplay.Systems
                         Radius = explosive.ValueRO.ExplosionRadius,
                         Impulse = explosive.ValueRO.ExplosionImpulse,
                         AngularImpulse = CalculateExplosionAngularImpulse(explosive),
-                        Clip = SoundClipUtility.Resolve(SoundKind.Explode, entity, _soundClipOverrideLookup, soundDefaults),
+                        Sound = explosive.ValueRO.ExplosionSound,
                         Vfx = explosive.ValueRO.ExplosionVfx
                     });
 
