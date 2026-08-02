@@ -11,23 +11,15 @@ namespace Pyre.Gameplay.Systems
 {
     public partial struct ExplodeSystem : ISystem
     {
-        private ComponentLookup<PulseAnimationSource> _pulseAnimationSourceLookup;
-        private ComponentLookup<BlinkAnimationSource> _blinkAnimationSourceLookup;
-
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
-            _pulseAnimationSourceLookup = state.GetComponentLookup<PulseAnimationSource>(isReadOnly: true);
-            _blinkAnimationSourceLookup = state.GetComponentLookup<BlinkAnimationSource>(isReadOnly: true);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            _pulseAnimationSourceLookup.Update(ref state);
-            _blinkAnimationSourceLookup.Update(ref state);
-
             var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
@@ -55,37 +47,8 @@ namespace Pyre.Gameplay.Systems
                         .Add(new PlayAudioSourceEvent { AudioSourceEntity = explosive.ValueRO.TickAudioSourceEntity });
                 }
 
-                if (_pulseAnimationSourceLookup.TryGetComponent(entity, out var pulseAnimationSource))
-                {
-                    ecb.AddComponent(entity, new PulseAnimation
-                    {
-                        MinScale = pulseAnimationSource.MinScale,
-                        MaxScale = pulseAnimationSource.MaxScale,
-                        BaseFrequency = pulseAnimationSource.BaseFrequency,
-                        MaxFrequency = pulseAnimationSource.MaxFrequency,
-                        ResetOnFinish = pulseAnimationSource.ResetOnFinish,
-
-                        TotalDuration = delay,
-                        ElapsedTime = 0f,
-                    });
-                }
-
-                if (_blinkAnimationSourceLookup.TryGetComponent(entity, out var blinkAnimationSource))
-                {
-                    ecb.AddComponent(entity, new BlinkAnimation
-                    {
-                        StartColor = blinkAnimationSource.StartColor,
-                        EndColor = blinkAnimationSource.EndColor,
-                        MinOpacity = blinkAnimationSource.MinOpacity,
-                        MaxOpacity = blinkAnimationSource.MaxOpacity,
-                        BaseFrequency = blinkAnimationSource.BaseFrequency,
-                        MaxFrequency = blinkAnimationSource.MaxFrequency,
-                        ResetOnFinish = blinkAnimationSource.ResetOnFinish,
-
-                        TotalDuration = delay,
-                        ElapsedTime = 0f,
-                    });
-                }
+                SystemAPI.GetSingletonBuffer<PlayAnimationEvent>()
+                    .Add(new PlayAnimationEvent { Target = entity, Duration = delay });
             }
         }
 

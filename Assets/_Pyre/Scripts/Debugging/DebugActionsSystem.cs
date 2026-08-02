@@ -18,6 +18,8 @@ namespace Pyre.Debugging
 {
     public partial struct DebugActionsSystem : ISystem
     {
+        private const float DebugAnimationDuration = 3f;
+
         private bool _toggleVfx;
 
         [BurstCompile]
@@ -108,37 +110,19 @@ namespace Pyre.Debugging
 
             if (Keyboard.current?.eKey.wasPressedThisFrame == true)
             {
-                foreach (var (pulseSource, entity) in
-                         SystemAPI.Query<RefRO<PulseAnimationSource>>().WithEntityAccess())
-                {
-                    ecb.AddComponent(entity, new PulseAnimation
-                    {
-                        MinScale = pulseSource.ValueRO.MinScale,
-                        MaxScale = pulseSource.ValueRO.MaxScale,
-                        BaseFrequency = pulseSource.ValueRO.BaseFrequency,
-                        MaxFrequency = pulseSource.ValueRO.MaxFrequency,
+                var playAnimationEventBuffer = SystemAPI.GetSingletonBuffer<PlayAnimationEvent>();
 
-                        TotalDuration = 3f,
-                        ElapsedTime = 0f,
-                    });
+                var animatableQuery = SystemAPI.QueryBuilder()
+                    .WithAny<PulseAnimationSource, BlinkAnimationSource>()
+                    .Build();
+
+                var animatableEntities = animatableQuery.ToEntityArray(Allocator.Temp);
+                foreach (var entity in animatableEntities)
+                {
+                    playAnimationEventBuffer.Add(new PlayAnimationEvent { Target = entity, Duration = DebugAnimationDuration });
                 }
 
-                foreach (var (blinkSource, entity) in
-                         SystemAPI.Query<RefRO<BlinkAnimationSource>>().WithEntityAccess())
-                {
-                    ecb.AddComponent(entity, new BlinkAnimation
-                    {
-                        StartColor = blinkSource.ValueRO.StartColor,
-                        EndColor = blinkSource.ValueRO.EndColor,
-                        MinOpacity = blinkSource.ValueRO.MinOpacity,
-                        MaxOpacity = blinkSource.ValueRO.MaxOpacity,
-                        BaseFrequency = blinkSource.ValueRO.BaseFrequency,
-                        MaxFrequency = blinkSource.ValueRO.MaxFrequency,
-
-                        TotalDuration = 3f,
-                        ElapsedTime = 0f,
-                    });
-                }
+                animatableEntities.Dispose();
             }
 
             if (Keyboard.current?.aKey.wasPressedThisFrame == true)
