@@ -13,7 +13,6 @@ namespace Pyre.Gameplay.Systems
     {
         private ComponentLookup<Water> _waterLookup;
         private ComponentLookup<IgnitionProgress> _ignitionProgressLookup;
-        private ComponentLookup<Ignitable> _ignitableLookup;
 
         [BurstCompile]
         public void OnCreate(ref SystemState state)
@@ -23,7 +22,6 @@ namespace Pyre.Gameplay.Systems
 
             _waterLookup = state.GetComponentLookup<Water>(isReadOnly: true);
             _ignitionProgressLookup = state.GetComponentLookup<IgnitionProgress>(isReadOnly: false);
-            _ignitableLookup = state.GetComponentLookup<Ignitable>(isReadOnly: true);
         }
 
         [BurstCompile]
@@ -68,7 +66,6 @@ namespace Pyre.Gameplay.Systems
         {
             _waterLookup.Update(ref state);
             _ignitionProgressLookup.Update(ref state);
-            _ignitableLookup.Update(ref state);
         }
 
         private bool CastRigidbody(RigidBody body, float3 position, PhysicsWorldSingleton physicsWorld)
@@ -136,11 +133,7 @@ namespace Pyre.Gameplay.Systems
                 ecb.SetComponent(entity, new IgnitionProgress { Elapsed = 0f });
             }
 
-            var sound = _ignitableLookup.TryGetComponent(entity, out var ignitable) && ignitable.ExtinguishSound
-                ? ignitable.ExtinguishSound
-                : audioDefaults.ExtinguishSound;
-
-            soundEventBuffer.Add(new SoundEvent { Position = position, Sound = sound });
+            soundEventBuffer.Add(new SoundEvent { Position = position, Sound = audioDefaults.ExtinguishSound });
         }
     }
 }

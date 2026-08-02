@@ -118,7 +118,6 @@ MonoBehaviour:
   coolingRate: 0.5
   igniteSound: {fileID: 11400000, guid: fc5fb2a49bf84a3980b2e4aced47ca7d, type: 2}
   loopSound: {fileID: 11400000, guid: 3dc045f7047e48e5a141beb84fc1547c, type: 2}
-  extinguishSound: {fileID: 0}
 --- !u!114 &2463432266223189769
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,7 +12,6 @@ namespace Pyre.Gameplay.Components
         [Space]
         [SerializeField] private SoundClipSet igniteSound;
         [SerializeField] private SoundClipSet loopSound;
-        [SerializeField] private SoundClipSet extinguishSound;
 
         public class IgnitableBaker : Baker<IgnitableAuthoring>
         {
@@ -25,8 +24,7 @@ namespace Pyre.Gameplay.Components
                     IgnitionTime = authoring.ignitionTime,
                     CoolingRate = authoring.coolingRate,
                     IgniteSound = authoring.igniteSound,
-                    LoopSound = authoring.loopSound,
-                    ExtinguishSound = authoring.extinguishSound
+                    LoopSound = authoring.loopSound
                 });
                 AddComponent(entity, new IgnitionProgress { Elapsed = 0f });
             }

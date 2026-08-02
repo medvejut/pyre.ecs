@@ -11,6 +11,5 @@ namespace Pyre.Gameplay.Components
 
         public UnityObjectRef<SoundClipSet> IgniteSound;
         public UnityObjectRef<SoundClipSet> LoopSound;
-        public UnityObjectRef<SoundClipSet> ExtinguishSound;
     }
 }
