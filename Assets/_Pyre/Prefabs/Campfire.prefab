@@ -99,6 +99,19 @@ Light:
   m_LightUnit: 2
   m_LuxAtDistance: 30
   m_EnableSpotReflector: 1
+--- !u!114 &7149087717055907093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 742678212111675080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aaa43902f0c45a0a403d79326e01c6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Animations.Components.Authoring.LightBlinkAnimationAuthoring
+  Config: {fileID: 11400000, guid: 10681b0daebc4d959f7bab1bea931c36, type: 2}
 --- !u!114 &7149087717055907092
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,19 +253,6 @@ MonoBehaviour:
   m_AreaLightEmissiveMeshShadowCastingMode: 0
   m_AreaLightEmissiveMeshMotionVectorGenerationMode: 0
   m_AreaLightEmissiveMeshLayer: -1
---- !u!114 &7149087717055907093
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 742678212111675080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5aaa43902f0c45a0a403d79326e01c6b, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Animations.Components.Authoring.LightBlinkAnimationAuthoring
-  Config: {fileID: 11400000, guid: 10681b0daebc4d959f7bab1bea931c36, type: 2}
 --- !u!1 &985099668873924795
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,6 +467,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: c6752b3d4a551e945b6ced05fd960dee, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: e4e682ca50a577343954ee1c241d514c, type: 2}
     - target: {fileID: 919132149155446097, guid: c6752b3d4a551e945b6ced05fd960dee, type: 3}
       propertyPath: m_Name
       value: debris-wood
