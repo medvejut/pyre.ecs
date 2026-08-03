@@ -72,7 +72,7 @@ namespace Pyre.Gameplay.Systems
                         Radius = explosive.ValueRO.ExplosionRadius,
                         Impulse = explosive.ValueRO.ExplosionImpulse,
                         AngularImpulse = CalculateExplosionAngularImpulse(explosive),
-                        Clip = explosive.ValueRO.ExplosionClip,
+                        Sound = explosive.ValueRO.ExplosionSound,
                         Vfx = explosive.ValueRO.ExplosionVfx
                     });
 

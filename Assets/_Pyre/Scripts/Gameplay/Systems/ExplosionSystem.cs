@@ -69,7 +69,7 @@ namespace Pyre.Gameplay.Systems
 
                 hits.Dispose();
 
-                soundEventBuffer.Add(new SoundEvent { Position = explosion.ValueRO.Position, Clip = explosion.ValueRO.Clip, SpatialBlend = 0f });
+                soundEventBuffer.Add(new SoundEvent { Position = explosion.ValueRO.Position, Sound = explosion.ValueRO.Sound });
 
                 if (explosion.ValueRO.Vfx)
                 {

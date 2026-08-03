@@ -40,9 +40,11 @@ namespace Pyre.Gameplay.Systems
 
                     if (SystemAPI.ManagedAPI.TryGetComponent(view.ValueRO.ProgressEntity, out AudioSource audioSource))
                     {
-                        if (shouldRender)
+                        var loopClip = ignitable.ValueRO.LoopSound;
+
+                        if (shouldRender && loopClip)
                         {
-                            audioSource.clip = ignitable.ValueRO.LoopClip;
+                            audioSource.clip = loopClip;
                             audioSource.loop = true;
                             audioSource.Play();
                         }

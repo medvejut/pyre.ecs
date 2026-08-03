@@ -18,7 +18,7 @@ MonoBehaviour:
     LinearDamping: 3
     AngularDamping: 5
   audioDefaults:
-    ExtinguishClip:
+    ExtinguishSound:
       Id:
         entityId:
-          m_rawData: 568105584918874514
+          m_rawData: 568105584918867802

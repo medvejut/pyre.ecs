@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using Pyre.Audio;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -16,7 +17,7 @@ namespace Pyre.Gameplay.Components
         public float CustomExplosionAngularImpulseMultiplier;
         public uint CustomExplosionAngularImpulseRandomSeed;
 
-        public UnityObjectRef<AudioClip> ExplosionClip;
+        public UnityObjectRef<SoundClipSet> ExplosionSound;
         public Entity TickAudioSourceEntity;
 
         public UnityObjectRef<ParticleSystem> ExplosionVfx;
