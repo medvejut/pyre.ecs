@@ -55,7 +55,7 @@ namespace Pyre.Gameplay.Systems
                     }
                 }
 
-                if (SystemAPI.TryGetComponent<ProgressMaterialProperty>(view.ValueRO.ProgressEntity, out var progressMaterialProperty))
+                if (SystemAPI.TryGetComponent<MaterialPropertyProgress>(view.ValueRO.ProgressEntity, out var progressMaterialProperty))
                 {
                     progressMaterialProperty.Value = ignitionProgress.ValueRO.Elapsed / ignitable.ValueRO.IgnitionTime;
                     SystemAPI.SetComponent(view.ValueRO.ProgressEntity, progressMaterialProperty);

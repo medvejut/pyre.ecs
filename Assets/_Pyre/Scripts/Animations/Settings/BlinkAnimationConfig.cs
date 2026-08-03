@@ -5,6 +5,7 @@ namespace Pyre.Animations.Settings
     [CreateAssetMenu(fileName = "BlinkAnimationConfig", menuName = "Pyre/Animations/Blink Animation Config")]
     public class BlinkAnimationConfig : ScriptableObject
     {
+        public Color initialColor = new(1f, 1f, 1f, 0f);
         public Color startColor = Color.white;
         public Color endColor = Color.red;
 

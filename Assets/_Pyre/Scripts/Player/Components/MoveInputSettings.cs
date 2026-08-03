@@ -3,7 +3,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 
-namespace Pyre.Gameplay.Components
+namespace Pyre.Player.Components
 {
     [Serializable]
     public struct MoveInputSettings : IComponentData

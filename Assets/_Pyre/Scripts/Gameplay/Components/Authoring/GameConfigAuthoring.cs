@@ -25,7 +25,7 @@ namespace Pyre.Gameplay.Components
 
                 AddComponent(entity, authoring.Config.moveInput);
                 AddComponent(entity, authoring.Config.knockback);
-                AddComponent(entity, authoring.Config.audioDefaults);
+                AddComponent(entity, new AudioDefaults { ExtinguishSound = authoring.Config.extinguishSound });
             }
         }
     }

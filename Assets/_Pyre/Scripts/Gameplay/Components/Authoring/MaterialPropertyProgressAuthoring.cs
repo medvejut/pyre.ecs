@@ -12,7 +12,7 @@ namespace Pyre.Gameplay.Components
             public override void Bake(MaterialPropertyProgressAuthoring authoring)
             {
                 var entity = GetEntity(TransformUsageFlags.Renderable);
-                AddComponent(entity, new ProgressMaterialProperty { Value = authoring.Value });
+                AddComponent(entity, new MaterialPropertyProgress { Value = authoring.Value });
             }
         }
     }

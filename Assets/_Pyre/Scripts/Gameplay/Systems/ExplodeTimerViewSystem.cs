@@ -38,7 +38,7 @@ namespace Pyre.Gameplay.Systems
                     ecb.RemoveComponent<DisableRendering>(view.ValueRO.ProgressEntity);
                 }
 
-                if (SystemAPI.TryGetComponent<ProgressMaterialProperty>(view.ValueRO.ProgressEntity, out var progressMaterialProperty))
+                if (SystemAPI.TryGetComponent<MaterialPropertyProgress>(view.ValueRO.ProgressEntity, out var progressMaterialProperty))
                 {
                     progressMaterialProperty.Value = timer.ValueRO.TimeRemaining / explosive.ValueRO.Delay;
                     SystemAPI.SetComponent(view.ValueRO.ProgressEntity, progressMaterialProperty);

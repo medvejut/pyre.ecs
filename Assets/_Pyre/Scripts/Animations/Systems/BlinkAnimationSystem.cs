@@ -23,7 +23,7 @@ namespace Pyre.Animations.Systems
             var deltaTime = SystemAPI.Time.DeltaTime;
 
             foreach (var (blink, blinkColor, entity) in
-                     SystemAPI.Query<RefRW<BlinkAnimation>, RefRW<BlinkColorMaterialProperty>>().WithEntityAccess())
+                     SystemAPI.Query<RefRW<BlinkAnimation>, RefRW<MaterialPropertyBlinkColor>>().WithEntityAccess())
             {
                 if (blink.ValueRO.ResetOnFinish && blink.ValueRO.ElapsedTime <= 0f)
                 {

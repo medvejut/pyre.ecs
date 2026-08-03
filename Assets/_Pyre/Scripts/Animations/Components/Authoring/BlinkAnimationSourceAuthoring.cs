@@ -22,6 +22,7 @@ namespace Pyre.Animations.Components
 
                 var startColor = authoring.Config.startColor;
                 var endColor = authoring.Config.endColor;
+                var initialColor = authoring.Config.initialColor;
 
                 AddComponent(entity, new BlinkAnimationSource
                 {
@@ -32,6 +33,11 @@ namespace Pyre.Animations.Components
                     BaseFrequency = authoring.Config.baseFrequency,
                     MaxFrequency = authoring.Config.maxFrequency,
                     ResetOnFinish = authoring.Config.resetOnFinish,
+                });
+
+                AddComponent(entity, new MaterialPropertyBlinkColor
+                {
+                    Value = new float4(initialColor.r, initialColor.g, initialColor.b, initialColor.a)
                 });
             }
         }
