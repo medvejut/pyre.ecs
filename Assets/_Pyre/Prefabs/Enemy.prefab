@@ -116,8 +116,8 @@ MonoBehaviour:
   burningRadius: 1.5
   ignitionTime: 1
   coolingRate: 0.5
-  igniteSound: {fileID: 11400000, guid: fc5fb2a49bf84a3980b2e4aced47ca7d, type: 2}
-  loopSound: {fileID: 11400000, guid: 3dc045f7047e48e5a141beb84fc1547c, type: 2}
+  startBurningSound: {fileID: 11400000, guid: fc5fb2a49bf84a3980b2e4aced47ca7d, type: 2}
+  loopSound: {fileID: 8300000, guid: a9691dd2c75dd7b4f883c0ae4289b651, type: 3}
 --- !u!114 &2463432266223189769
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -40,12 +40,11 @@ namespace Pyre.Gameplay.Systems
 
                     if (SystemAPI.ManagedAPI.TryGetComponent(view.ValueRO.ProgressEntity, out AudioSource audioSource))
                     {
-                        // Луп по природе одиночный — из набора берётся первый клип.
-                        var loopSound = ignitable.ValueRO.LoopSound.Value;
+                        var loopClip = ignitable.ValueRO.LoopSound;
 
-                        if (shouldRender && loopSound && loopSound.clips.Length > 0)
+                        if (shouldRender && loopClip)
                         {
-                            audioSource.clip = loopSound.clips[0];
+                            audioSource.clip = loopClip;
                             audioSource.loop = true;
                             audioSource.Play();
                         }

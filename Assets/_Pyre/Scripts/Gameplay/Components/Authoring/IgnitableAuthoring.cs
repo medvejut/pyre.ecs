@@ -10,8 +10,8 @@ namespace Pyre.Gameplay.Components
         [SerializeField] private float ignitionTime = 1f;
         [SerializeField] private float coolingRate = 0.5f;
         [Space]
-        [SerializeField] private SoundClipSet igniteSound;
-        [SerializeField] private SoundClipSet loopSound;
+        [SerializeField] private SoundClipSet startBurningSound;
+        [SerializeField] private AudioClip loopSound;
 
         public class IgnitableBaker : Baker<IgnitableAuthoring>
         {
@@ -23,7 +23,7 @@ namespace Pyre.Gameplay.Components
                     BurningRadius = authoring.burningRadius,
                     IgnitionTime = authoring.ignitionTime,
                     CoolingRate = authoring.coolingRate,
-                    IgniteSound = authoring.igniteSound,
+                    StartBurningSound = authoring.startBurningSound,
                     LoopSound = authoring.loopSound
                 });
                 AddComponent(entity, new IgnitionProgress { Elapsed = 0f });

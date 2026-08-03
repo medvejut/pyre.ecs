@@ -17,4 +17,8 @@ MonoBehaviour:
   knockback:
     LinearDamping: 3
     AngularDamping: 5
-  extinguishSound: {fileID: 11400000, guid: e21df4ee4fca470096cc75b01f50955a, type: 2}
+  audioDefaults:
+    ExtinguishSound:
+      Id:
+        entityId:
+          m_rawData: 0

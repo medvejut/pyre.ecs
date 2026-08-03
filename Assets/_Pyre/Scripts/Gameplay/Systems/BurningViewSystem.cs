@@ -42,7 +42,7 @@ namespace Pyre.Gameplay.Systems
 
                     if (SystemAPI.TryGetComponent<Ignitable>(entity, out var ignitable))
                     {
-                        soundEventBuffer.Add(new SoundEvent { Position = ltw.ValueRO.Position, Sound = ignitable.IgniteSound });
+                        soundEventBuffer.Add(new SoundEvent { Position = ltw.ValueRO.Position, Sound = ignitable.StartBurningSound });
                     }
                 }
                 else
