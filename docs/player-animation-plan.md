@@ -1,5 +1,9 @@
 # Player skeletal animation — pure ECS (no third-party packages)
 
+> **Status:** Stages 0–2 done. Stage 3 (`SkeletonPoseSystem`) is next. Code lives in
+> `Assets/_Pyre/Scripts/Skeletons/`, namespace `Pyre.Skeletons.*`. The Context section below describes the
+> starting point and is kept as written; Stage 1's checkpoint records what was resolved since.
+
 ## Context
 
 The Hero currently has no animation at all. `Assets/_Pyre/Prefabs/Hero.prefab` renders its body via a
@@ -53,20 +57,24 @@ is localized instead of being a black screen with five suspects.
 
 ## How the pieces fit
 
+All of this lives under `Assets/_Pyre/Scripts/Skeletons/`, namespace `Pyre.Skeletons.*` — deliberately
+*not* `Pyre.Animations`, which is property/tween animation (blink, pulse, light blink) and shares nothing
+with skeletal deformation but the word.
+
 ```
 AnimationClip (FBX)
    │  editor bake (sample TRS per frame per bone)
    ▼
-CharacterAnimationSet (ScriptableObject, serialized float arrays)
-   │  Baker → BlobAssetReference<AnimationLibraryBlob>
+SkeletonClipSet (ScriptableObject, serialized float arrays)
+   │  Baker → BlobAssetReference<SkeletonClipLibrary>
    ▼
-AnimationPlayer (IComponentData)  ──┐
-SkeletonBone   (IBufferElementData) │  SkeletalAnimationSamplingSystem  (before TransformSystemGroup)
+SkeletonPose (IComponentData)     ──┐
+SkeletonBone   (IBufferElementData) │  SkeletonPoseSystem  (before TransformSystemGroup)
                                     ▼  writes LocalTransform of every bone entity
                           TransformSystemGroup → LocalToWorld per bone
                                     │
-SkinBone (IBufferElementData) ──────┤  ComputeSkinMatricesSystem  (PresentationSystemGroup)
-                                    ▼  writes DynamicBuffer<SkinMatrix>
+SkinBone (IBufferElementData) ──────┤  SkinMatrixSystem  (PresentationSystemGroup)
+SkinTarget (IComponentData)         ▼  writes DynamicBuffer<SkinMatrix>
                     Entities Graphics deformation systems → GPU
                                     ▼
                 Shader Graph material w/ Linear Blend Skinning node
@@ -75,7 +83,7 @@ SkinBone (IBufferElementData) ──────┤  ComputeSkinMatricesSystem  
 Two separate bone lists, and this distinction matters:
 
 * **`SkeletonBone`** — *every* transform under the model root that the clips animate, in hierarchy
-  order. This is what the sampling system writes `LocalTransform` to.
+  order. This is what `SkeletonPoseSystem` writes `LocalTransform` to.
 * **`SkinBone`** — only `SkinnedMeshRenderer.bones[i]` plus `sharedMesh.bindposes[i]`, in the
   renderer's own order. This is what the skin-matrix system reads.
 
@@ -99,8 +107,11 @@ pose and the character animates wrong in a way that is very confusing to debug.
     there is nothing left to animate.
   * Under **Model**, enable **Read/Write** on the mesh. Entities Graphics' deformation path needs CPU
     access to the mesh data.
-  * Confirm the clips actually import as sub-assets and **write down their exact names** — the FBX is
-    LFS-only in this checkout so the names could not be read here, and Stage 2 needs them.
+  * Confirm the clips actually import as sub-assets. The FBX carries 24 takes:
+    `idle`, `walk`, `sprint`, `crouch`, `jump`, `fall`, `die`, `sit`, `drive`, `static`, `pick-up`,
+    `interact-left`, `interact-right`, `emote-yes`, `emote-no`, `attack-kick-left`, `attack-kick-right`,
+    `attack-melee-left`, `attack-melee-right`, `holding-left`, `holding-right`, `holding-both`,
+    `holding-left-shoot`, `holding-right-shoot`, `holding-both-shoot`.
 * Confirm in the Project window that the imported model prefab has a real `SkinnedMeshRenderer` and a
   bone hierarchy. If the FBX has animation but no skinning, this whole approach does not apply and the
   model needs to be re-exported.
@@ -111,7 +122,7 @@ pose and the character animates wrong in a way that is very confusing to debug.
 
 Goal: the warning disappears and the character still draws. No animation yet.
 
-1. **New Shader Graph** `Assets/_Pyre/Shaders/Character Skinned.shadergraph`, HDRP **Lit** target, to
+1. **New Shader Graph** `Assets/_Pyre/Shaders/Hero_Skinned.shadergraph`, HDRP **Lit** target, to
    match the look of the existing HDRP/Lit materials.
    * Add a **Linear Blend Skinning** node; wire its `Position` / `Normal` / `Tangent` outputs into the
      Vertex block. This node only appears when Entities Graphics is installed — if it is missing,
@@ -122,10 +133,10 @@ Goal: the warning disappears and the character still draws. No animation yet.
      used here.
    * The **Compute Deformation** node and the `ENABLE_COMPUTE_DEFORMATIONS` scripting define are only
      needed for blend shapes. Skip both — linear blend skinning is enough and is one less moving part.
-2. **New material** `Assets/_Pyre/Materials/Character.mat` using that graph.
+2. **New material** `Assets/_Pyre/Materials/Hero_Skinned.mat` using that graph.
 3. **Edit `Assets/_Pyre/Prefabs/Hero.prefab`:** delete the `body-mesh` child and replace it with an
    instance of the `character-oopi` model prefab (which brings the `SkinnedMeshRenderer` *and* the bone
-   hierarchy). Set its localScale to **3** to preserve the current size, and assign `Character.mat` in
+   hierarchy). Set its localScale to **3** to preserve the current size, and assign `Hero_Skinned.mat` in
    the `SkinnedMeshRenderer`'s material slot — this overrides the FBX-embedded material without having
    to extract it.
    * Leave the other children (`indicator-square-c`, `Icon_Fire`, `Icon_Ignition`, `Fire`) untouched;
@@ -133,28 +144,39 @@ Goal: the warning disappears and the character still draws. No animation yet.
    * `LocalTransform` only supports uniform scale, so 3 is fine.
 4. Re-open/re-bake the subscene `Assets/_Pyre/Scenes/Prototype/Entity Sub Scene.unity`.
 
-**Checkpoint:** Play. The character renders in bind pose, no HDRP-material warning. Open
-*Window → Entities → Hierarchy*, select the baked Hero, and **record which entity carries
-`DynamicBuffer<SkinMatrix>` and which carries `DeformedEntity`.** Stage 4 needs this, and it is the one
-detail worth confirming empirically rather than assuming — if Entities Graphics 6.5.0 does not create
-the buffer itself, our own baker adds it, sized to `smr.bones.Length`.
+**Checkpoint:** Play. The character renders in bind pose, no HDRP-material warning.
+
+**Resolved** (from `SkinnedMeshRendererBaker` in Entities Graphics 6.5.0, not assumed):
+
+* `DynamicBuffer<SkinMatrix>` is created by Entities Graphics itself, on the entity of the
+  **`SkinnedMeshRenderer`'s own GameObject** (`GetEntity(TransformUsageFlags.Dynamic)` in its baker),
+  sized to `smr.bones.Length` and pre-filled with bind-pose matrices. **Our baker must not add it.**
+* `DeformedEntity` and `DeformedMeshIndex` are `internal` to `Unity.Rendering` — unusable from
+  `Assembly-CSharp`, and unnecessary. `Unity.Deformations.SkinMatrix` is public.
+* The renderer entities are additional entities parented to `smr.rootBone` (falling back to the
+  renderer's transform) with an identity `LocalTransform`. **So skin matrices are consumed in root-bone
+  space** — not world space, and not the deformed entity's space when the two transforms differ.
+* A baker may only add components to its own primary and additional entities
+  (`Baker.CheckValidAdditionalEntity`), so a baker on the model root cannot write to the deformed
+  entity. Hence `SkinTarget` below.
 
 ---
 
 ## Stage 2 — Bake clips and skeleton into blob assets
 
 Follow the existing conventions: `Feature/Components/*.cs`, `Feature/Components/Authoring/*Authoring.cs`,
-`Feature/Systems/*System.cs`, `Feature/Settings/*Config.cs`, namespace `Pyre.Animations.*`. There are no
-asmdefs, so everything lands in `Assembly-CSharp` and editor-only code must live in an `Editor/` folder.
+`Feature/Systems/*System.cs`, `Feature/Settings/*.cs`, namespace `Pyre.Skeletons.*`. There are no asmdefs,
+so runtime code lands in `Assembly-CSharp` and editor-only code must live in an `Editor/` folder
+(`Assembly-CSharp-Editor`, which references `Assembly-CSharp`, so the one-way dependency is fine).
 
-**`Assets/_Pyre/Scripts/Animations/Settings/CharacterAnimationSet.cs`** — a `ScriptableObject`
-(`[CreateAssetMenu(menuName = "Pyre/Animations/Character Animation Set")]`, matching the existing
+**`Assets/_Pyre/Scripts/Skeletons/Settings/SkeletonClipSet.cs`** — a `ScriptableObject`
+(`[CreateAssetMenu(menuName = "Pyre/Skeletons/Skeleton Clip Set")]`, matching the existing
 `BlinkAnimationConfig` / `PulseAnimationConfig` pattern). Holds the model prefab, the list of
 `AnimationClip`s, a sample rate (30 is plenty), and the *baked output*: for each clip, a flat
 `Vector3[] translations`, `Quaternion[] rotations`, `float[] scales` laid out `[frame * boneCount + bone]`,
-plus `boneCount`, `frameCount`, `length`, `looping`.
+plus `boneCount`, `frameCount`, `length`, `looping`, and the bone paths the order was recorded against.
 
-**`Assets/_Pyre/Scripts/Animations/Editor/CharacterAnimationSetEditor.cs`** — a `[CustomEditor]` with a
+**`Assets/_Pyre/Scripts/Skeletons/Editor/SkeletonClipSetEditor.cs`** — a `[CustomEditor]` with a
 **Bake Clips** button. Doing the sampling here rather than inside a Baker matters: `SampleAnimation`
 *mutates the hierarchy it samples*, and bakers must not have side effects. The button:
 
@@ -180,15 +202,17 @@ Sampling into the live hierarchy and reading transforms back is what makes clip-
 mapping a non-issue: Unity resolves the paths, we just read the result in a fixed order.
 
 **Root motion:** if the clips translate the root bone, the character will slide and fight
-`PlayerMovementSystem` (which writes `PhysicsVelocity.Linear` directly). Zero out `translations` for
-bone index 0 at bake time, behind a `stripRootMotion` toggle on the asset.
+`PlayerMovementSystem` (which writes `PhysicsVelocity.Linear` directly). Behind a `stripRootMotion`
+toggle, hold the bone named by `rootMotionBone` (default `root`, matching the importer's
+`rootMotionBoneName`) at its **bind-pose translation** for every frame. Not zero — zeroing drops the hip
+height offset and sinks the character through the floor.
 
-**`Assets/_Pyre/Scripts/Animations/Components/AnimationLibraryBlob.cs`**
+**`Assets/_Pyre/Scripts/Skeletons/Components/SkeletonClipLibrary.cs`**
 
 ```csharp
 public struct BoneKey { public float3 Translation; public quaternion Rotation; public float Scale; }
 
-public struct AnimationClipBlob
+public struct SkeletonClipBlob
 {
     public float Length, FrameRate;
     public int FrameCount, BoneCount;
@@ -196,39 +220,49 @@ public struct AnimationClipBlob
     public BlobArray<BoneKey> Keys;   // [frame * BoneCount + bone]
 }
 
-public struct AnimationLibraryBlob { public BlobArray<AnimationClipBlob> Clips; }
+public struct SkeletonClipLibrary { public BlobArray<SkeletonClipBlob> Clips; }
 ```
 
-**`Assets/_Pyre/Scripts/Animations/Components/SkeletonBone.cs`** — `IBufferElementData { Entity Bone; }`,
+**`Assets/_Pyre/Scripts/Skeletons/Components/SkeletonBone.cs`** — `IBufferElementData { Entity Bone; }`,
 hierarchy order, matching the bake order exactly.
 
-**`Assets/_Pyre/Scripts/Animations/Components/SkinBone.cs`** — `IBufferElementData { Entity Bone; float4x4 BindPose; }`,
+**`Assets/_Pyre/Scripts/Skeletons/Components/SkinBone.cs`** — `IBufferElementData { Entity Bone; float4x4 BindPose; }`,
 in `smr.bones` order.
 
-**`Assets/_Pyre/Scripts/Animations/Components/Authoring/CharacterAnimationAuthoring.cs`** — sits on the
-model root next to the `SkinnedMeshRenderer`. Its baker:
+**`Assets/_Pyre/Scripts/Skeletons/Components/SkinTarget.cs`** —
+`IComponentData { Entity DeformedEntity; Entity SkinSpaceBone; }`. Not in the original plan; forced by the
+two Stage 1 findings above. `SkinBone` lives on the skeleton root next to `SkeletonBone`, and Stage 4
+writes through a `BufferLookup<SkinMatrix>` into `DeformedEntity` rather than iterating the buffer directly.
 
-* `DependsOn(authoring.AnimationSet)` — same rebake-dependency idiom as
-  `BlinkAnimationSourceAuthoring`.
-* Builds the `AnimationLibraryBlob` with a `BlobBuilder` and `AddBlobAsset` (so it is deduplicated and
+**`Assets/_Pyre/Scripts/Skeletons/Components/Authoring/SkeletonAuthoring.cs`** — sits on the model root,
+which owns both the bone hierarchy and the `SkinnedMeshRenderer` as descendants. Its baker:
+
+* `DependsOn(authoring.ClipSet)` — same rebake-dependency idiom as `BlinkAnimationSourceAuthoring`.
+* Builds the `SkeletonClipLibrary` with a `BlobBuilder` and `AddBlobAsset` (so it is deduplicated and
   serialized into the subscene).
-* Fills `SkeletonBone` from `GetComponentsInChildren<Transform>(true)` via
-  `GetEntity(t, TransformUsageFlags.Dynamic)` — **`Dynamic` is required**, the bones must have a
-  writable `LocalTransform`.
-* Fills `SkinBone` from `smr.bones[i]` + `smr.sharedMesh.bindposes[i]`.
-* Adds `AnimationPlayer` (Stage 3) and, if Stage 1 showed it absent, the `SkinMatrix` buffer.
+* Fills `SkeletonBone` from `GetComponentsInChildren<Transform>()` — the Baker overload, which defaults to
+  `includeInactive: true` and so matches the bake tool's ordering — via
+  `GetEntity(t, TransformUsageFlags.Dynamic)`. **`Dynamic` is required**, the bones must have a writable
+  `LocalTransform`.
+* Fills `SkinBone` from `smr.bones[i]` + `smr.sharedMesh.bindposes[i]`, and adds `SkinTarget`.
+* Adds `SkeletonPose` (Stage 3). It does **not** add the `SkinMatrix` buffer — Entities Graphics does.
+* Verifies its own bone list against the paths recorded at bake time. The blob is indexed by that order;
+  a mismatch would apply every pose to the wrong bone silently.
+
+**Asset:** `Assets/_Pyre/Settings/Hero Skeleton Clips.asset`, created from the menu, pointed at
+`character-oopi` with the clips you want, then **Bake Clips**.
 
 ---
 
 ## Stage 3 — Sample the pose onto the bones
 
-**`Assets/_Pyre/Scripts/Animations/Components/AnimationPlayer.cs`** — designed for a manual two-clip
+**`Assets/_Pyre/Scripts/Skeletons/Components/SkeletonPose.cs`** — designed for a manual two-clip
 blend from the start, which is what makes idle↔walk not pop:
 
 ```csharp
-public struct AnimationPlayer : IComponentData
+public struct SkeletonPose : IComponentData
 {
-    public BlobAssetReference<AnimationLibraryBlob> Library;
+    public BlobAssetReference<SkeletonClipLibrary> Library;
     public int   ClipA, ClipB;
     public float TimeA, TimeB;
     public float Blend;   // 0 = pure A, 1 = pure B
@@ -236,11 +270,11 @@ public struct AnimationPlayer : IComponentData
 }
 ```
 
-**`Assets/_Pyre/Scripts/Animations/Systems/SkeletalAnimationSamplingSystem.cs`** — Burst `ISystem`,
+**`Assets/_Pyre/Scripts/Skeletons/Systems/SkeletonPoseSystem.cs`** — Burst `ISystem`,
 `[UpdateInGroup(typeof(SimulationSystemGroup))] [UpdateBefore(typeof(TransformSystemGroup))]`, so the
 bone `LocalToWorld`s are rebuilt from the new pose in the same frame.
 
-An `IJobEntity` over `(ref AnimationPlayer, in DynamicBuffer<SkeletonBone>)` advances both clip times
+An `IJobEntity` over `(ref SkeletonPose, in DynamicBuffer<SkeletonBone>)` advances both clip times
 (wrapping on `Length` when `Looping`), samples each clip at its two bracketing frames with
 `math.lerp` / `math.slerp`, blends A→B by `Blend`, and writes the result through a
 `ComponentLookup<LocalTransform>`.
@@ -249,7 +283,7 @@ Write via `.Schedule()` (single-threaded) rather than `.ScheduleParallel()`. Par
 `ComponentLookup` need `[NativeDisableParallelForRestriction]`, which is only safe because bone sets
 are disjoint — an assumption not worth taking on for one character.
 
-**Checkpoint:** force `ClipA` to a walk clip and press Play. The bone entities should visibly animate
+**Checkpoint:** set `SkeletonAuthoring.DefaultClip` to `walk` and press Play. The bone entities should visibly animate
 in the Entities Hierarchy inspector *even though the mesh is still in bind pose* — nothing is feeding
 `SkinMatrix` yet. Seeing the transforms move here proves Stages 2–3 independently of the GPU side.
 
@@ -257,16 +291,18 @@ in the Entities Hierarchy inspector *even though the mesh is still in bind pose*
 
 ## Stage 4 — Compute skin matrices
 
-**`Assets/_Pyre/Scripts/Animations/Systems/ComputeSkinMatricesSystem.cs`** — Burst `ISystem`,
-`[UpdateInGroup(typeof(PresentationSystemGroup))]` and `[UpdateBefore(typeof(Unity.Rendering.DeformationsInPresentation))]`
-(verify that group name against the installed package; if it is not public, order relative to whatever
-Entities Graphics 6.5.0 exposes, or fall back to `[UpdateInGroup(typeof(PresentationSystemGroup), OrderFirst = true)]`).
+**`Assets/_Pyre/Scripts/Skeletons/Systems/SkinMatrixSystem.cs`** — Burst `ISystem`,
+`[UpdateInGroup(typeof(PresentationSystemGroup))]` and
+`[UpdateBefore(typeof(Unity.Rendering.DeformationsInPresentation))]`. That group **is** public in Entities
+Graphics 6.5.0, so no fallback is needed. `PushSkinMatrixSystem` runs inside it and reads the buffer.
 
-For each entity holding the `SkinMatrix` buffer, with `rootLtw` = the `LocalToWorld` of *that same
-entity* (the deformed entity — this is the space Linear Blend Skinning expects, not the world):
+For each skeleton root holding `(SkinTarget, DynamicBuffer<SkinBone>)`, with `rootLtw` = the
+`LocalToWorld` of **`SkinTarget.SkinSpaceBone`** — `smr.rootBone`, which is the space the render entities
+are parented to, and therefore the space Linear Blend Skinning expects:
 
 ```csharp
-var worldToRoot = math.inverse(rootLtw.Value);
+var worldToRoot = math.inverse(ltwLookup[skinTarget.SkinSpaceBone].Value);
+var skinMatrices = skinMatrixLookup[skinTarget.DeformedEntity];
 for (var i = 0; i < skinBones.Length; i++)
 {
     var m = math.mul(worldToRoot, math.mul(ltwLookup[skinBones[i].Bone].Value, skinBones[i].BindPose));
@@ -274,18 +310,22 @@ for (var i = 0; i < skinBones.Length; i++)
 }
 ```
 
+This is exactly what `SkinnedMeshRendererBaker` computes at bake time (`rootMatrixInv * boneLtw * bindPose`),
+so the identity case is checkable: with `SkeletonPoseSystem` disabled the runtime result must equal the
+baked bind-pose buffer.
+
 **Checkpoint:** the mesh deforms. If it explodes or turns inside out, the cause is almost always this
-formula's spaces — try the deformed entity's `LocalToWorld` vs the renderer entity's, and confirm
-`bindposes` orientation, before touching anything else.
+formula's spaces — confirm `SkinSpaceBone` really is `smr.rootBone` and check `bindposes` orientation
+before touching anything else.
 
 ---
 
 ## Stage 5 — Drive clip selection from gameplay
 
-**`Assets/_Pyre/Scripts/Animations/Components/CharacterAnimationState.cs`**
+**`Assets/_Pyre/Scripts/Skeletons/Components/CharacterSkeletonState.cs`**
 
 ```csharp
-public struct CharacterAnimationState : IComponentData
+public struct CharacterSkeletonState : IComponentData
 {
     public float NormalizedSpeed;  // 0..1
     public bool  IsBurning;
@@ -293,8 +333,8 @@ public struct CharacterAnimationState : IComponentData
 }
 ```
 
-**`Assets/_Pyre/Scripts/Animations/Systems/CharacterAnimationStateSystem.cs`** — Burst `ISystem` in
-`SimulationSystemGroup`, `[UpdateBefore(typeof(SkeletalAnimationSamplingSystem))]`. Nothing currently
+**`Assets/_Pyre/Scripts/Skeletons/Systems/CharacterSkeletonStateSystem.cs`** — Burst `ISystem` in
+`SimulationSystemGroup`, `[UpdateBefore(typeof(SkeletonPoseSystem))]`. Nothing currently
 stores a speed anywhere (`PlayerMovementSystem` writes `PhysicsVelocity.Linear` and moves on), so
 derive it:
 
@@ -308,51 +348,65 @@ derive it:
   a flinch/react pose that blends in as the player starts catching fire, and a burning loop once
   `Burning` lands.
 
-**`Assets/_Pyre/Scripts/Animations/Systems/CharacterAnimationSelectionSystem.cs`** — maps that state to
-`AnimationPlayer`:
+**`Assets/_Pyre/Scripts/Skeletons/Systems/CharacterClipSelectionSystem.cs`** — maps that state to
+`SkeletonPose`:
 
 * `ClipA = Idle`, `ClipB = Walk`, `Blend = NormalizedSpeed` — a hand-rolled 1D blend tree, and the
-  reason `AnimationPlayer` carries two slots.
+  reason `SkeletonPose` carries two slots.
 * Scale `Speed` with `NormalizedSpeed` so footfalls roughly track ground speed.
 * When `IsBurning`, swap `ClipB` to the burn/panic clip and drive `Blend` toward 1 over a short fade
   rather than snapping.
 * Keep `TimeA`/`TimeB` phase-synced while blending locomotion clips, otherwise idle and walk fight
   each other.
 
-Clip indices come from named fields on the `CharacterAnimationSet` asset, resolved to indices at bake
-time — do not hardcode integers in systems.
+Clip indices come from named fields on the `SkeletonClipSet` asset, resolved via `SkeletonClipSet.IndexOf`
+at bake time — do not hardcode integers in systems. Candidate roles from the imported takes: `idle`,
+`walk`, `sprint`, `interact-right` or `emote-no` for the ignition flinch, `die` or `fall` for burning.
 
 ---
 
 ## Files
 
-**New**
+Everything skeletal lives in its own feature folder, `Assets/_Pyre/Scripts/Skeletons/`. `Animations/` keeps
+only the tween/property animation it already had.
+
+**Done — Stage 1**
 ```
-Assets/_Pyre/Shaders/Character Skinned.shadergraph
-Assets/_Pyre/Materials/Character.mat
-Assets/_Pyre/Settings/Hero Animation Set.asset
-Assets/_Pyre/Scripts/Animations/Settings/CharacterAnimationSet.cs
-Assets/_Pyre/Scripts/Animations/Editor/CharacterAnimationSetEditor.cs
-Assets/_Pyre/Scripts/Animations/Components/AnimationLibraryBlob.cs
-Assets/_Pyre/Scripts/Animations/Components/AnimationPlayer.cs
-Assets/_Pyre/Scripts/Animations/Components/CharacterAnimationState.cs
-Assets/_Pyre/Scripts/Animations/Components/SkeletonBone.cs
-Assets/_Pyre/Scripts/Animations/Components/SkinBone.cs
-Assets/_Pyre/Scripts/Animations/Components/Authoring/CharacterAnimationAuthoring.cs
-Assets/_Pyre/Scripts/Animations/Systems/SkeletalAnimationSamplingSystem.cs
-Assets/_Pyre/Scripts/Animations/Systems/ComputeSkinMatricesSystem.cs
-Assets/_Pyre/Scripts/Animations/Systems/CharacterAnimationStateSystem.cs
-Assets/_Pyre/Scripts/Animations/Systems/CharacterAnimationSelectionSystem.cs
+Assets/_Pyre/Shaders/Hero_Skinned.shadergraph
+Assets/_Pyre/Materials/Hero_Skinned.mat
+```
+
+**Done — Stage 2**
+```
+Assets/_Pyre/Scripts/Skeletons/Settings/SkeletonClipSet.cs
+Assets/_Pyre/Scripts/Skeletons/Editor/SkeletonClipSetEditor.cs
+Assets/_Pyre/Scripts/Skeletons/Components/SkeletonClipLibrary.cs
+Assets/_Pyre/Scripts/Skeletons/Components/SkeletonPose.cs
+Assets/_Pyre/Scripts/Skeletons/Components/SkeletonBone.cs
+Assets/_Pyre/Scripts/Skeletons/Components/SkinBone.cs
+Assets/_Pyre/Scripts/Skeletons/Components/SkinTarget.cs
+Assets/_Pyre/Scripts/Skeletons/Components/Authoring/SkeletonAuthoring.cs
+```
+
+**Remaining**
+```
+Assets/_Pyre/Settings/Hero Skeleton Clips.asset                        (Stage 2, authored in-editor)
+Assets/_Pyre/Scripts/Skeletons/Systems/SkeletonPoseSystem.cs           (Stage 3)
+Assets/_Pyre/Scripts/Skeletons/Systems/SkinMatrixSystem.cs             (Stage 4)
+Assets/_Pyre/Scripts/Skeletons/Components/CharacterSkeletonState.cs    (Stage 5)
+Assets/_Pyre/Scripts/Skeletons/Systems/CharacterSkeletonStateSystem.cs (Stage 5)
+Assets/_Pyre/Scripts/Skeletons/Systems/CharacterClipSelectionSystem.cs (Stage 5)
 ```
 
 **Modified**
 ```
-Assets/_Pyre/Models/character-oopi.fbx.meta          (avatarSetup, mesh Read/Write)
-Assets/_Pyre/Prefabs/Hero.prefab                     (body-mesh → skinned model instance)
+Assets/_Pyre/Models/character-oopi.fbx.meta          (avatarSetup, mesh Read/Write — done)
+Assets/_Pyre/Prefabs/Hero.prefab                     (body-mesh → skinned model instance — done;
+                                                      still needs SkeletonAuthoring on the model root)
 Assets/_Pyre/Scenes/Prototype/Entity Sub Scene.unity (re-bake)
 ```
 
-Nothing in `Assets/_Pyre/Scripts/Player/` changes — movement stays exactly as it is and animation only
+Nothing in `Assets/_Pyre/Scripts/Player/` changes — movement stays exactly as it is and the skeleton only
 reads from it.
 
 ---
@@ -372,16 +426,16 @@ once. End to end:
    `SkinMatrix` buffer is non-identity.
 6. Trigger an explosion (`DebugActionsSystem` has debug keys) and confirm knockback still reads
    correctly with the animated mesh.
-7. Profile briefly — `SkeletalAnimationSamplingSystem` is `.Schedule()`d single-threaded, which is
+7. Profile briefly — `SkeletonPoseSystem` is `.Schedule()`d single-threaded, which is
    fine for one character but is the first thing to revisit if the Enemy is animated later.
 
 ---
 
 ## Risks
 
-* **`git lfs pull` is a hard prerequisite** — the FBX contents could not be inspected from this
-  checkout, so the clip names, bone count, and whether the mesh is skinned at all are unverified.
-* **Which entity owns `SkinMatrix`** is confirmed empirically at the Stage 1 checkpoint, not assumed.
+* ~~**`git lfs pull` is a hard prerequisite**~~ — done. Clip names are listed in Stage 0. Bone count is
+  still unknown until the set is baked; the baker asserts it against the hierarchy.
+* ~~**Which entity owns `SkinMatrix`**~~ — resolved at the Stage 1 checkpoint, see there.
 * **Bind-pose/root-space maths** is the most likely source of a broken-looking mesh; Stage 3's
   checkpoint isolates it from the sampling code.
 * **Root motion** in the clips will fight `PlayerMovementSystem` — handled by the `stripRootMotion`
