@@ -1,6 +1,6 @@
 # Player skeletal animation — pure ECS (no third-party packages)
 
-> **Status:** Stages 0–3 done. Stage 4 (`SkinMatrixSystem`) is next. Code lives in
+> **Status:** Stages 0–4 done. Stage 5 (gameplay-driven clip selection) is next. Code lives in
 > `Assets/_Pyre/Scripts/Skeletons/`, namespace `Pyre.Skeletons.*`. The Context section below describes the
 > starting point and is kept as written; Stage 1's checkpoint records what was resolved since.
 
@@ -404,17 +404,17 @@ Assets/_Pyre/Scripts/Skeletons/Components/PoseBone.cs
 Assets/_Pyre/Scripts/Skeletons/Components/SkinBone.cs
 Assets/_Pyre/Scripts/Skeletons/Components/SkinTarget.cs
 Assets/_Pyre/Scripts/Skeletons/Components/Authoring/SkeletonAuthoring.cs
+Assets/_Pyre/Models/Hero SkeletonClipSet.asset   (authored in-editor; idle + walk baked over 7 bones)
 ```
 
-**Done — Stage 3**
+**Done — Stages 3 and 4**
 ```
 Assets/_Pyre/Scripts/Skeletons/Systems/SkeletonPoseSystem.cs
+Assets/_Pyre/Scripts/Skeletons/Systems/SkinMatrixSystem.cs
 ```
 
 **Remaining**
 ```
-Assets/_Pyre/Settings/Hero Skeleton Clips.asset                        (Stage 2, authored in-editor)
-Assets/_Pyre/Scripts/Skeletons/Systems/SkinMatrixSystem.cs             (Stage 4)
 Assets/_Pyre/Scripts/Skeletons/Components/CharacterSkeletonState.cs    (Stage 5)
 Assets/_Pyre/Scripts/Skeletons/Systems/CharacterSkeletonStateSystem.cs (Stage 5)
 Assets/_Pyre/Scripts/Skeletons/Systems/CharacterClipSelectionSystem.cs (Stage 5)
