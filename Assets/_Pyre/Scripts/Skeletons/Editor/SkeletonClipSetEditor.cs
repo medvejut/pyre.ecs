@@ -57,7 +57,13 @@ namespace Pyre.Skeletons.Editor
             try
             {
                 var root = instance.transform;
-                var bones = instance.GetComponentsInChildren<Transform>(true);
+                var bones = SkeletonClipSet.BonesWithoutRoot(instance.GetComponentsInChildren<Transform>(true));
+
+                if (bones.Length == 0)
+                {
+                    Debug.LogError($"[{set.name}] {set.modelPrefab.name} has no bones under its root.", set);
+                    return;
+                }
 
                 // Bind pose, read before any sampling mutates the hierarchy.
                 var bindTranslations = new Vector3[bones.Length];
@@ -148,7 +154,16 @@ namespace Pyre.Skeletons.Editor
                 EditorUtility.SetDirty(set);
                 AssetDatabase.SaveAssetIfDirty(set);
 
-                Debug.Log($"[{set.name}] Baked {baked.Length} clip(s) over {bones.Length} bones at {sampleRate} fps.", set);
+                // A clip that bakes non-looping holds on its last frame forever, which reads on screen as
+                // "the animation never ran at all". Name them so that is never a surprise.
+                var oneShot = System.Array.FindAll(baked, c => !c.looping);
+
+                Debug.Log(
+                    $"[{set.name}] Baked {baked.Length} clip(s) over {bones.Length} bones at {sampleRate} fps. " +
+                    (oneShot.Length == 0
+                        ? "All clips loop."
+                        : $"One-shot (hold on last frame): {string.Join(", ", System.Array.ConvertAll(oneShot, c => c.name))}."),
+                    set);
             }
             finally
             {

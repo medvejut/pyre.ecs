@@ -36,7 +36,7 @@ namespace Pyre.Skeletons.Components
                     return;
                 }
 
-                var bones = GetComponentsInChildren<Transform>();
+                var bones = SkeletonClipSet.BonesWithoutRoot(GetComponentsInChildren<Transform>());
 
                 if (!BonesMatchBakedOrder(authoring, set, bones))
                     return;
@@ -44,11 +44,11 @@ namespace Pyre.Skeletons.Components
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
 
                 // Dynamic, not Renderable: SkeletonPoseSystem writes LocalTransform to every one of these.
-                var skeleton = AddBuffer<SkeletonBone>(entity);
+                var skeleton = AddBuffer<PoseBone>(entity);
                 skeleton.ResizeUninitialized(bones.Length);
 
                 for (var i = 0; i < bones.Length; i++)
-                    skeleton[i] = new SkeletonBone { Bone = GetEntity(bones[i], TransformUsageFlags.Dynamic) };
+                    skeleton[i] = new PoseBone { Bone = GetEntity(bones[i], TransformUsageFlags.Dynamic) };
 
                 var library = BuildLibrary(set);
                 AddBlobAsset(ref library, out _);

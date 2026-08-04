@@ -65,6 +65,27 @@ namespace Pyre.Skeletons.Settings
         }
 
         /// <summary>
+        /// Drops the model root — index 0 of any GetComponentsInChildren&lt;Transform&gt; result — from the
+        /// bone list.
+        ///
+        /// The root's transform belongs to whoever instances the model, not to the clips: Hero.prefab scales
+        /// it to 3, while the model prefab the clips are baked against sits at scale 1. Driving it would
+        /// overwrite that instance scale every frame and shrink the character. Nothing is lost — FBX clip
+        /// curves are paths relative to the root and never address the root itself.
+        ///
+        /// Shared by the bake tool and the baker so both produce the same list.
+        /// </summary>
+        public static Transform[] BonesWithoutRoot(Transform[] hierarchy)
+        {
+            if (hierarchy == null || hierarchy.Length < 2)
+                return Array.Empty<Transform>();
+
+            var bones = new Transform[hierarchy.Length - 1];
+            Array.Copy(hierarchy, 1, bones, 0, bones.Length);
+            return bones;
+        }
+
+        /// <summary>
         /// Path of <paramref name="bone"/> relative to <paramref name="root"/>, empty for the root itself.
         /// Shared by the bake tool and the baker so both describe the hierarchy the same way.
         /// </summary>

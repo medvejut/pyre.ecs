@@ -9,8 +9,11 @@ namespace Pyre.Skeletons.Components
     ///
     /// Deliberately a different set from <see cref="SkinBone"/>: SkinnedMeshRenderer.bones omits parents
     /// that carry animation but influence no vertices, and leaving those frozen animates the character wrong.
+    ///
+    /// Named PoseBone rather than SkeletonBone because UnityEngine.SkeletonBone exists — the collision forces
+    /// a using alias on every file that imports both namespaces.
     /// </summary>
-    public struct SkeletonBone : IBufferElementData
+    public struct PoseBone : IBufferElementData
     {
         public Entity Bone;
     }

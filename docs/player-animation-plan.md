@@ -1,6 +1,6 @@
 # Player skeletal animation — pure ECS (no third-party packages)
 
-> **Status:** Stages 0–2 done. Stage 3 (`SkeletonPoseSystem`) is next. Code lives in
+> **Status:** Stages 0–3 done. Stage 4 (`SkinMatrixSystem`) is next. Code lives in
 > `Assets/_Pyre/Scripts/Skeletons/`, namespace `Pyre.Skeletons.*`. The Context section below describes the
 > starting point and is kept as written; Stage 1's checkpoint records what was resolved since.
 
@@ -69,7 +69,7 @@ SkeletonClipSet (ScriptableObject, serialized float arrays)
    │  Baker → BlobAssetReference<SkeletonClipLibrary>
    ▼
 SkeletonPose (IComponentData)     ──┐
-SkeletonBone   (IBufferElementData) │  SkeletonPoseSystem  (before TransformSystemGroup)
+PoseBone     (IBufferElementData)   │  SkeletonPoseSystem  (before TransformSystemGroup)
                                     ▼  writes LocalTransform of every bone entity
                           TransformSystemGroup → LocalToWorld per bone
                                     │
@@ -82,8 +82,12 @@ SkinTarget (IComponentData)         ▼  writes DynamicBuffer<SkinMatrix>
 
 Two separate bone lists, and this distinction matters:
 
-* **`SkeletonBone`** — *every* transform under the model root that the clips animate, in hierarchy
-  order. This is what `SkeletonPoseSystem` writes `LocalTransform` to.
+* **`PoseBone`** — *every* transform under the model root that the clips animate, in hierarchy
+  order. This is what `SkeletonPoseSystem` writes `LocalTransform` to. The model root itself is
+  **excluded**: its transform belongs to whoever instances the model (`Hero.prefab` scales it to 3) while
+  the model prefab the clips are baked against sits at scale 1, so driving it would overwrite the instance
+  scale every frame. FBX clip curves are paths relative to the root and never address the root, so nothing
+  is lost.
 * **`SkinBone`** — only `SkinnedMeshRenderer.bones[i]` plus `sharedMesh.bindposes[i]`, in the
   renderer's own order. This is what the skin-matrix system reads.
 
@@ -207,6 +211,15 @@ toggle, hold the bone named by `rootMotionBone` (default `root`, matching the im
 `rootMotionBoneName`) at its **bind-pose translation** for every frame. Not zero — zeroing drops the hip
 height offset and sinks the character through the floor.
 
+**Looping:** `looping` comes from `AnimationClip.isLooping`, which is **false for every take in this FBX
+out of the box** — Loop Time only becomes settable once the Model importer has authored `clipAnimations`
+entries, and this file ships with `clipAnimations: []`. A clip baked non-looping holds its last frame
+forever, which on screen is indistinguishable from "the animation never ran".
+
+So looping is set where it belongs, in the importer: select the FBX → **Animation** tab → pick the clip →
+**Loop Time** → **Apply**, then re-bake the clip set. The bake log names every clip that ended up one-shot
+so the state is never silent.
+
 **`Assets/_Pyre/Scripts/Skeletons/Components/SkeletonClipLibrary.cs`**
 
 ```csharp
@@ -223,7 +236,7 @@ public struct SkeletonClipBlob
 public struct SkeletonClipLibrary { public BlobArray<SkeletonClipBlob> Clips; }
 ```
 
-**`Assets/_Pyre/Scripts/Skeletons/Components/SkeletonBone.cs`** — `IBufferElementData { Entity Bone; }`,
+**`Assets/_Pyre/Scripts/Skeletons/Components/PoseBone.cs`** — `IBufferElementData { Entity Bone; }`,
 hierarchy order, matching the bake order exactly.
 
 **`Assets/_Pyre/Scripts/Skeletons/Components/SkinBone.cs`** — `IBufferElementData { Entity Bone; float4x4 BindPose; }`,
@@ -231,7 +244,7 @@ in `smr.bones` order.
 
 **`Assets/_Pyre/Scripts/Skeletons/Components/SkinTarget.cs`** —
 `IComponentData { Entity DeformedEntity; Entity SkinSpaceBone; }`. Not in the original plan; forced by the
-two Stage 1 findings above. `SkinBone` lives on the skeleton root next to `SkeletonBone`, and Stage 4
+two Stage 1 findings above. `SkinBone` lives on the skeleton root next to `PoseBone`, and Stage 4
 writes through a `BufferLookup<SkinMatrix>` into `DeformedEntity` rather than iterating the buffer directly.
 
 **`Assets/_Pyre/Scripts/Skeletons/Components/Authoring/SkeletonAuthoring.cs`** — sits on the model root,
@@ -240,8 +253,9 @@ which owns both the bone hierarchy and the `SkinnedMeshRenderer` as descendants.
 * `DependsOn(authoring.ClipSet)` — same rebake-dependency idiom as `BlinkAnimationSourceAuthoring`.
 * Builds the `SkeletonClipLibrary` with a `BlobBuilder` and `AddBlobAsset` (so it is deduplicated and
   serialized into the subscene).
-* Fills `SkeletonBone` from `GetComponentsInChildren<Transform>()` — the Baker overload, which defaults to
-  `includeInactive: true` and so matches the bake tool's ordering — via
+* Fills `PoseBone` from `GetComponentsInChildren<Transform>()` — the Baker overload, which defaults to
+  `includeInactive: true` and so matches the bake tool's ordering — minus the model root
+  (`SkeletonClipSet.BonesWithoutRoot`, shared with the bake tool), via
   `GetEntity(t, TransformUsageFlags.Dynamic)`. **`Dynamic` is required**, the bones must have a writable
   `LocalTransform`.
 * Fills `SkinBone` from `smr.bones[i]` + `smr.sharedMesh.bindposes[i]`, and adds `SkinTarget`.
@@ -274,7 +288,7 @@ public struct SkeletonPose : IComponentData
 `[UpdateInGroup(typeof(SimulationSystemGroup))] [UpdateBefore(typeof(TransformSystemGroup))]`, so the
 bone `LocalToWorld`s are rebuilt from the new pose in the same frame.
 
-An `IJobEntity` over `(ref SkeletonPose, in DynamicBuffer<SkeletonBone>)` advances both clip times
+An `IJobEntity` over `(ref SkeletonPose, in DynamicBuffer<PoseBone>)` advances both clip times
 (wrapping on `Length` when `Looping`), samples each clip at its two bracketing frames with
 `math.lerp` / `math.slerp`, blends A→B by `Blend`, and writes the result through a
 `ComponentLookup<LocalTransform>`.
@@ -286,6 +300,10 @@ are disjoint — an assumption not worth taking on for one character.
 **Checkpoint:** set `SkeletonAuthoring.DefaultClip` to `walk` and press Play. The bone entities should visibly animate
 in the Entities Hierarchy inspector *even though the mesh is still in bind pose* — nothing is feeding
 `SkinMatrix` yet. Seeing the transforms move here proves Stages 2–3 independently of the GPU side.
+
+If nothing moves, read `SkeletonPose` on the Hero's `character-oopi` entity before suspecting the maths:
+`TimeA` pinned at the clip's `Length` means the clip baked non-looping (see above); `SkeletonPose` missing
+entirely means the baker bailed and the console has the reason.
 
 ---
 
@@ -382,16 +400,20 @@ Assets/_Pyre/Scripts/Skeletons/Settings/SkeletonClipSet.cs
 Assets/_Pyre/Scripts/Skeletons/Editor/SkeletonClipSetEditor.cs
 Assets/_Pyre/Scripts/Skeletons/Components/SkeletonClipLibrary.cs
 Assets/_Pyre/Scripts/Skeletons/Components/SkeletonPose.cs
-Assets/_Pyre/Scripts/Skeletons/Components/SkeletonBone.cs
+Assets/_Pyre/Scripts/Skeletons/Components/PoseBone.cs
 Assets/_Pyre/Scripts/Skeletons/Components/SkinBone.cs
 Assets/_Pyre/Scripts/Skeletons/Components/SkinTarget.cs
 Assets/_Pyre/Scripts/Skeletons/Components/Authoring/SkeletonAuthoring.cs
 ```
 
+**Done — Stage 3**
+```
+Assets/_Pyre/Scripts/Skeletons/Systems/SkeletonPoseSystem.cs
+```
+
 **Remaining**
 ```
 Assets/_Pyre/Settings/Hero Skeleton Clips.asset                        (Stage 2, authored in-editor)
-Assets/_Pyre/Scripts/Skeletons/Systems/SkeletonPoseSystem.cs           (Stage 3)
 Assets/_Pyre/Scripts/Skeletons/Systems/SkinMatrixSystem.cs             (Stage 4)
 Assets/_Pyre/Scripts/Skeletons/Components/CharacterSkeletonState.cs    (Stage 5)
 Assets/_Pyre/Scripts/Skeletons/Systems/CharacterSkeletonStateSystem.cs (Stage 5)
