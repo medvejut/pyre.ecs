@@ -340,10 +340,30 @@ before touching anything else.
 
 ## Stage 5 — Drive clip selection from gameplay
 
-**`Assets/_Pyre/Scripts/Skeletons/Components/CharacterSkeletonState.cs`**
+**This stage does not live in `Pyre.Skeletons`.** Stages 2–4 have zero dependencies on any other `Pyre.*`
+namespace — verified: the only `using`s across those ten files are `Unity.Entities`, `Unity.Mathematics`,
+`Unity.Transforms`, `Unity.Collections`, `Unity.Burst`, `UnityEngine`, `Unity.Deformations`,
+`Unity.Rendering`, and `UnityEditor` in the bake tool. That makes the folder a reusable animation runtime,
+and it should stay that way.
+
+Stage 5 is the opposite: it reads `PhysicsVelocity`, `PlayerMovement`, `Burning`, `IgnitionProgress` and
+`Ignitable`. Putting it under `Scripts/Skeletons/` would drag `Pyre.Player`, `Pyre.Gameplay` and
+`Unity.Physics` into the library. So it goes on the **consumer** side, under `Scripts/Player/`, namespace
+`Pyre.Player.*` — matching the existing `PlayerMovement` / `PlayerMovementSystem` layout. The dependency
+then runs one way, `Pyre.Player → Pyre.Skeletons`, and `SkeletonPose` is the seam: plain data with no
+gameplay concepts in it.
+
+(If the Enemy is ever animated too, lift these three files into a shared `Pyre.Characters` rather than
+moving them into `Pyre.Skeletons`.)
+
+Nothing enforces the isolation today — there are no asmdefs, so everything lands in `Assembly-CSharp` and
+the compiler will happily let a future file reach across. An asmdef on `Scripts/Skeletons/` would make it
+real, at the cost of needing asmdefs for the rest of the project too.
+
+**`Assets/_Pyre/Scripts/Player/Components/PlayerSkeletonState.cs`**
 
 ```csharp
-public struct CharacterSkeletonState : IComponentData
+public struct PlayerSkeletonState : IComponentData
 {
     public float NormalizedSpeed;  // 0..1
     public bool  IsBurning;
@@ -351,7 +371,7 @@ public struct CharacterSkeletonState : IComponentData
 }
 ```
 
-**`Assets/_Pyre/Scripts/Skeletons/Systems/CharacterSkeletonStateSystem.cs`** — Burst `ISystem` in
+**`Assets/_Pyre/Scripts/Player/Systems/PlayerSkeletonStateSystem.cs`** — Burst `ISystem` in
 `SimulationSystemGroup`, `[UpdateBefore(typeof(SkeletonPoseSystem))]`. Nothing currently
 stores a speed anywhere (`PlayerMovementSystem` writes `PhysicsVelocity.Linear` and moves on), so
 derive it:
@@ -366,7 +386,7 @@ derive it:
   a flinch/react pose that blends in as the player starts catching fire, and a burning loop once
   `Burning` lands.
 
-**`Assets/_Pyre/Scripts/Skeletons/Systems/CharacterClipSelectionSystem.cs`** — maps that state to
+**`Assets/_Pyre/Scripts/Player/Systems/PlayerClipSelectionSystem.cs`** — maps that state to
 `SkeletonPose`:
 
 * `ClipA = Idle`, `ClipB = Walk`, `Blend = NormalizedSpeed` — a hand-rolled 1D blend tree, and the
@@ -415,9 +435,9 @@ Assets/_Pyre/Scripts/Skeletons/Systems/SkinMatrixSystem.cs
 
 **Remaining**
 ```
-Assets/_Pyre/Scripts/Skeletons/Components/CharacterSkeletonState.cs    (Stage 5)
-Assets/_Pyre/Scripts/Skeletons/Systems/CharacterSkeletonStateSystem.cs (Stage 5)
-Assets/_Pyre/Scripts/Skeletons/Systems/CharacterClipSelectionSystem.cs (Stage 5)
+Assets/_Pyre/Scripts/Player/Components/PlayerSkeletonState.cs       (Stage 5)
+Assets/_Pyre/Scripts/Player/Systems/PlayerSkeletonStateSystem.cs   (Stage 5)
+Assets/_Pyre/Scripts/Player/Systems/PlayerClipSelectionSystem.cs   (Stage 5)
 ```
 
 **Modified**
@@ -428,8 +448,9 @@ Assets/_Pyre/Prefabs/Hero.prefab                     (body-mesh → skinned mode
 Assets/_Pyre/Scenes/Prototype/Entity Sub Scene.unity (re-bake)
 ```
 
-Nothing in `Assets/_Pyre/Scripts/Player/` changes — movement stays exactly as it is and the skeleton only
-reads from it.
+No existing file in `Assets/_Pyre/Scripts/Player/` changes — movement stays exactly as it is, and the
+Stage 5 files added there only read from it. The dependency runs one way, `Pyre.Player → Pyre.Skeletons`;
+nothing under `Scripts/Skeletons/` may reference `Pyre.Player` or `Pyre.Gameplay`.
 
 ---
 
