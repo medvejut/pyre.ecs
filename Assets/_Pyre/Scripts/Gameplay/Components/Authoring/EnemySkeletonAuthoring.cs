@@ -3,16 +3,17 @@ using Pyre.Skeletons.Components;
 using Unity.Entities;
 using UnityEngine;
 
-namespace Pyre.Player.Components
+namespace Pyre.Gameplay.Components
 {
-    public class PlayerSkeletonAuthoring : MonoBehaviour
+    public class EnemySkeletonAuthoring : MonoBehaviour
     {
-        public string IdleClipName = "Idle";
-        public string WalkClipName = "Walk";
+        public string IdleClipName;
+        public string FallClipName;
+        public string WarningClipName;
 
-        public class PlayerSkeletonBaker : Baker<PlayerSkeletonAuthoring>
+        public class EnemySkeletonBaker : Baker<EnemySkeletonAuthoring>
         {
-            public override void Bake(PlayerSkeletonAuthoring authoring)
+            public override void Bake(EnemySkeletonAuthoring authoring)
             {
                 var skeleton = GetComponentInChildren<SkeletonAuthoring>();
                 if (skeleton == null || skeleton.ClipSet == null)
@@ -25,11 +26,12 @@ namespace Pyre.Player.Components
 
                 var entity = GetEntity(TransformUsageFlags.None);
 
-                AddComponent(entity, new PlayerSkeleton
+                AddComponent(entity, new EnemySkeleton
                 {
                     Skeleton = GetEntity(skeleton, TransformUsageFlags.None),
                     Idle = SkeletonUtils.ResolveClipIndex(skeleton.ClipSet, authoring.IdleClipName, authoring),
-                    Walk = SkeletonUtils.ResolveClipIndex(skeleton.ClipSet, authoring.WalkClipName, authoring)
+                    Fall = SkeletonUtils.ResolveClipIndex(skeleton.ClipSet, authoring.FallClipName, authoring),
+                    Warning = SkeletonUtils.ResolveClipIndex(skeleton.ClipSet, authoring.WarningClipName, authoring)
                 });
             }
         }
