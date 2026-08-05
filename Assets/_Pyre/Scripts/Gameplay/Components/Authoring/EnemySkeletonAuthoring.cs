@@ -8,8 +8,10 @@ namespace Pyre.Gameplay.Components
     public class EnemySkeletonAuthoring : MonoBehaviour
     {
         public string IdleClipName;
-        public string FallClipName;
+        public string BurnClipName;
         public string WarningClipName;
+
+        public float FadeDuration = 0.15f;
 
         public class EnemySkeletonBaker : Baker<EnemySkeletonAuthoring>
         {
@@ -30,9 +32,12 @@ namespace Pyre.Gameplay.Components
                 {
                     Skeleton = GetEntity(skeleton, TransformUsageFlags.None),
                     Idle = SkeletonUtils.ResolveClipIndex(skeleton.ClipSet, authoring.IdleClipName, authoring),
-                    Fall = SkeletonUtils.ResolveClipIndex(skeleton.ClipSet, authoring.FallClipName, authoring),
-                    Warning = SkeletonUtils.ResolveClipIndex(skeleton.ClipSet, authoring.WarningClipName, authoring)
+                    Burn = SkeletonUtils.ResolveClipIndex(skeleton.ClipSet, authoring.BurnClipName, authoring),
+                    Warning = SkeletonUtils.ResolveClipIndex(skeleton.ClipSet, authoring.WarningClipName, authoring),
+                    FadeDuration = authoring.FadeDuration
                 });
+
+                AddComponent(entity, new EnemyAnimationState { State = EnemyAnimation.Reset });
             }
         }
     }

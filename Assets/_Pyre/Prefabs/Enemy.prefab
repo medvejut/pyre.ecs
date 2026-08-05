@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Gameplay.Components.EnemySkeletonAuthoring
   IdleClipName: idle
-  FallClipName: walk
+  BurnClipName: walk
   WarningClipName: emote-no
 --- !u!1001 &3870524059171983785
 PrefabInstance:

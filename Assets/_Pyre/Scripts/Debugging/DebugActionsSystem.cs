@@ -154,6 +154,34 @@ namespace Pyre.Debugging
                     ecb.AddComponent(entity, new Burning { HeatRadius = 0 });
                 }
             }
+
+            if (Keyboard.current?.digit1Key.wasPressedThisFrame == true)
+            {
+                SetEnemyAnimation(ref state, EnemyAnimation.Idle);
+            }
+
+            if (Keyboard.current?.digit2Key.wasPressedThisFrame == true)
+            {
+                SetEnemyAnimation(ref state, EnemyAnimation.Warning);
+            }
+
+            if (Keyboard.current?.digit3Key.wasPressedThisFrame == true)
+            {
+                SetEnemyAnimation(ref state, EnemyAnimation.Burning);
+            }
+        }
+
+        private void SetEnemyAnimation(ref SystemState state, EnemyAnimation animation)
+        {
+            var count = 0;
+
+            foreach (var enemyAnimation in SystemAPI.Query<RefRW<EnemyAnimationState>>())
+            {
+                enemyAnimation.ValueRW.State = animation;
+                count++;
+            }
+
+            Debug.Log($"Enemy animation set to {animation} on {count} enemy(ies)");
         }
 
         [BurstCompile]
