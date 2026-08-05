@@ -371,7 +371,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Authoring.IgnitableAuthoring
   burningRadius: 0
-  ignitionTime: 1
+  ignitionTime: 0.1
   coolingRate: 0.5
   startBurningSound: {fileID: 0}
   loopSound: {fileID: 8300000, guid: a9691dd2c75dd7b4f883c0ae4289b651, type: 3}
