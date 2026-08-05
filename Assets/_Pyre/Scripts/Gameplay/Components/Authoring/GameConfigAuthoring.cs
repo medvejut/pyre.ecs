@@ -1,3 +1,4 @@
+using Pyre.Player.Components;
 using Pyre.Settings;
 using Unity.Entities;
 using UnityEngine;
@@ -23,8 +24,12 @@ namespace Pyre.Gameplay.Components
 
                 var entity = GetEntity(TransformUsageFlags.None);
 
-                AddComponent(entity, authoring.Config.moveInput);
-                AddComponent(entity, authoring.Config.knockback);
+                AddComponent(entity, new MoveInputSettings { Yaw = authoring.Config.inputYaw });
+                AddComponent(entity, new KnockbackSettings
+                {
+                    LinearDamping = authoring.Config.knockbackLinearDamping,
+                    AngularDamping = authoring.Config.knockbackAngularDamping
+                });
                 AddComponent(entity, new AudioDefaults { ExtinguishSound = authoring.Config.extinguishSound });
             }
         }

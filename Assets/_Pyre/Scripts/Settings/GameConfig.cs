@@ -1,6 +1,4 @@
 using Pyre.Audio;
-using Pyre.Gameplay.Components;
-using Pyre.Player.Components;
 using UnityEngine;
 
 namespace Pyre.Settings
@@ -8,10 +6,15 @@ namespace Pyre.Settings
     [CreateAssetMenu(fileName = "GameConfig", menuName = "Pyre/Game Config")]
     public class GameConfig : ScriptableObject
     {
-        public MoveInputSettings moveInput = new() { Yaw = 45f };
+        [Header("Movement")]
+        [Tooltip("Yaw that maps raw movement input onto world axes. Match the camera rig's Y rotation for screen-relative movement.")]
+        [Range(-180f, 180f)] public float inputYaw = 45f;
 
-        public KnockbackSettings knockback = new() { LinearDamping = 3f, AngularDamping = 5f };
+        [Header("Knockback")]
+        public float knockbackLinearDamping = 3f;
+        public float knockbackAngularDamping = 5f;
 
+        [Header("Audio")]
         public SoundClipSet extinguishSound;
     }
 }

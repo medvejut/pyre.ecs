@@ -12,9 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd4a187c38b807b4989b91db617d23bf, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Settings.GameConfig
-  moveInput:
-    Yaw: 40
-  knockback:
-    LinearDamping: 3
-    AngularDamping: 5
+  inputYaw: 40
+  knockbackLinearDamping: 3
+  knockbackAngularDamping: 5
   extinguishSound: {fileID: 11400000, guid: e21df4ee4fca470096cc75b01f50955a, type: 2}
