@@ -183,10 +183,5 @@ namespace Pyre.Debugging
 
             Debug.Log($"Enemy animation set to {animation} on {count} enemy(ies)");
         }
-
-        [BurstCompile]
-        public void OnDestroy(ref SystemState state)
-        {
-        }
     }
 }

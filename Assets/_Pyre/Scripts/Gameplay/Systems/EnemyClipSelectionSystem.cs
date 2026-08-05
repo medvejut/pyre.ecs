@@ -7,7 +7,6 @@ using Unity.Entities;
 namespace Pyre.Gameplay.Systems
 {
     // Uses the two SkeletonPose slots as from/to for a cross-fade between states, not as a blend tree.
-    [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(SkeletonPoseSystem))]
     public partial struct EnemyClipSelectionSystem : ISystem

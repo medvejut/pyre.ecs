@@ -8,7 +8,6 @@ using Unity.Physics;
 
 namespace Pyre.Gameplay.Systems
 {
-    [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(EnemyClipSelectionSystem))]
     public partial struct EnemyAnimationStateSystem : ISystem

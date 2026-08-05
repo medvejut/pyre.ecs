@@ -16,7 +16,6 @@ namespace Pyre.Skeletons.Systems
     /// This is the half Unity does not ship. Entities Graphics renders a deformed mesh from these matrices,
     /// but nothing has written them since com.unity.animation was discontinued.
     /// </summary>
-    [BurstCompile]
     [UpdateInGroup(typeof(PresentationSystemGroup))]
     [UpdateBefore(typeof(DeformationsInPresentation))]
     public partial struct SkinMatrixSystem : ISystem

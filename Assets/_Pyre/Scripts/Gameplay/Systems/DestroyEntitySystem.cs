@@ -46,10 +46,5 @@ namespace Pyre.Gameplay.Systems
                 ecb.DestroyEntity(entity);
             }
         }
-
-        [BurstCompile]
-        public void OnDestroy(ref SystemState state)
-        {
-        }
     }
 }

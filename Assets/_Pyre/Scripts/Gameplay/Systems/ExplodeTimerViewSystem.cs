@@ -45,10 +45,5 @@ namespace Pyre.Gameplay.Systems
                 }
             }
         }
-
-        [BurstCompile]
-        public void OnDestroy(ref SystemState state)
-        {
-        }
     }
 }

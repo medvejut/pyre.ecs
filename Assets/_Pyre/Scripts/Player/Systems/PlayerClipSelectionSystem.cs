@@ -9,7 +9,6 @@ using Unity.Physics;
 namespace Pyre.Player.Systems
 {
     // Uses the two SkeletonPose slots as a 1D blend tree along ground speed: idle in A, walk in B.
-    [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(SkeletonPoseSystem))]
     public partial struct PlayerClipSelectionSystem : ISystem

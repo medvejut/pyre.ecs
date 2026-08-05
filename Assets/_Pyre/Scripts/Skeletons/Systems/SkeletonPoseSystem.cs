@@ -12,7 +12,6 @@ namespace Pyre.Skeletons.Systems
     /// Runs before TransformSystemGroup so the bone LocalToWorlds are rebuilt from the new pose in the same
     /// frame — SkinMatrixSystem reads those in PresentationSystemGroup, later in the very same frame.
     /// </summary>
-    [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(TransformSystemGroup))]
     public partial struct SkeletonPoseSystem : ISystem
