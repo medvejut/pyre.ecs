@@ -5,13 +5,20 @@ namespace Pyre.Transforms.Components
 {
     public class FreezeWorldRotationAuthoring : MonoBehaviour
     {
+        public Quaternion WorldRotation = Quaternion.identity;
+
         public class FreezeWorldRotationBaker : Baker<FreezeWorldRotationAuthoring>
         {
             public override void Bake(FreezeWorldRotationAuthoring authoring)
             {
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
-                AddComponent(entity, new FreezeWorldRotation { WorldRotation = authoring.transform.rotation });
+                AddComponent(entity, new FreezeWorldRotation { WorldRotation = authoring.WorldRotation });
             }
+        }
+
+        private void OnValidate()
+        {
+            transform.rotation = WorldRotation;
         }
     }
 }
