@@ -25,20 +25,6 @@ namespace Pyre.Gameplay.Systems
                 ecb.DestroyEntity(burningView.ValueRO.FireEntity);
             }
 
-            foreach (var ignitionProgressView in SystemAPI
-                         .Query<RefRO<IgnitionProgressView>>()
-                         .WithAll<DestroyRequested>())
-            {
-                ecb.DestroyEntity(ignitionProgressView.ValueRO.ProgressEntity);
-            }
-
-            foreach (var explodeTimerView in SystemAPI
-                         .Query<RefRO<ExplodeTimerView>>()
-                         .WithAll<DestroyRequested>())
-            {
-                ecb.DestroyEntity(explodeTimerView.ValueRO.ProgressEntity);
-            }
-
             foreach (var (_, entity) in SystemAPI
                          .Query<RefRO<DestroyRequested>>()
                          .WithEntityAccess())

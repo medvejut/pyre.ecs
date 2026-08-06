@@ -12,5 +12,6 @@ namespace Pyre.Gameplay.Components
 
         public UnityObjectRef<SoundClipSet> StartBurningSound;
         public UnityObjectRef<AudioClip> LoopSound;
+        public Entity LoopAudioSourceEntity;
     }
 }
