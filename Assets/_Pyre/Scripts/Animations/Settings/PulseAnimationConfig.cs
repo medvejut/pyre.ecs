@@ -1,3 +1,4 @@
+using Pyre.Animations.Components;
 using UnityEngine;
 
 namespace Pyre.Animations.Settings
@@ -10,6 +11,12 @@ namespace Pyre.Animations.Settings
         public float baseFrequency = 1f;
         public float maxFrequency = 4f;
 
-        public bool resetOnFinish = true;
+        public PulseAnimation ToAnimation() => new()
+        {
+            MinScale = minScale,
+            MaxScale = maxScale,
+            BaseFrequency = baseFrequency,
+            MaxFrequency = maxFrequency,
+        };
     }
 }

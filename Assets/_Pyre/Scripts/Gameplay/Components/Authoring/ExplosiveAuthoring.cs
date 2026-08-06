@@ -1,4 +1,5 @@
-﻿using Pyre.Audio;
+﻿using Pyre.Animations.Settings;
+using Pyre.Audio;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -9,6 +10,10 @@ namespace Pyre.Gameplay.Components
     {
         public bool ExplodeOnStartBurn = true;
         public float Delay = 3f;
+        [Space]
+        [Tooltip("Played on this object for the whole of Delay. Leave empty to play nothing.")]
+        public PulseAnimationConfig WarningPulse;
+        public BlinkAnimationConfig WarningBlink;
         [Space]
         public float ExplosionRadius = 3f;
         public float ExplosionImpulse = 10f;
@@ -34,11 +39,20 @@ namespace Pyre.Gameplay.Components
         {
             public override void Bake(ExplosiveAuthoring authoring)
             {
+                DependsOn(authoring.WarningPulse);
+                DependsOn(authoring.WarningBlink);
+
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
                 AddComponent(entity, new Explosive
                 {
                     ExplodeOnStartBurn = authoring.ExplodeOnStartBurn,
                     Delay = authoring.Delay,
+
+                    PlayWarningPulse = authoring.WarningPulse != null,
+                    WarningPulse = authoring.WarningPulse != null ? authoring.WarningPulse.ToAnimation() : default,
+                    PlayWarningBlink = authoring.WarningBlink != null,
+                    WarningBlink = authoring.WarningBlink != null ? authoring.WarningBlink.ToAnimation() : default,
+
                     ExplosionRadius = authoring.ExplosionRadius,
 
                     CustomExplosionAngularImpulseMultiplier = authoring.CustomExplosionAngularImpulseMultiplier,

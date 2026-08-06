@@ -1,4 +1,4 @@
-﻿using Pyre.Animations.Components;
+﻿using Pyre.Animations;
 using Pyre.Cameras.Components;
 using Pyre.Gameplay.Components;
 using Pyre.Player.Components;
@@ -110,19 +110,22 @@ namespace Pyre.Debugging
 
             if (Keyboard.current?.eKey.wasPressedThisFrame == true)
             {
-                var playAnimationEventBuffer = SystemAPI.GetSingletonBuffer<PlayAnimationEvent>();
-
-                var animatableQuery = SystemAPI.QueryBuilder()
-                    .WithAny<PulseAnimationSource, BlinkAnimationSource>()
-                    .Build();
-
-                var animatableEntities = animatableQuery.ToEntityArray(Allocator.Temp);
-                foreach (var entity in animatableEntities)
+                // Play the same warning animations an explosive plays for real, so the
+                // hotkey exercises the real path. Pressing it again stacks another
+                // instance rather than restarting the running one.
+                foreach (var (explosive, entity) in
+                         SystemAPI.Query<RefRO<Explosive>>().WithEntityAccess())
                 {
-                    playAnimationEventBuffer.Add(new PlayAnimationEvent { Target = entity, Duration = DebugAnimationDuration });
-                }
+                    if (explosive.ValueRO.PlayWarningPulse)
+                    {
+                        AnimationPlayer.Play(ecb, entity, DebugAnimationDuration, explosive.ValueRO.WarningPulse);
+                    }
 
-                animatableEntities.Dispose();
+                    if (explosive.ValueRO.PlayWarningBlink)
+                    {
+                        AnimationPlayer.Play(ecb, entity, DebugAnimationDuration, explosive.ValueRO.WarningBlink);
+                    }
+                }
             }
 
             if (Keyboard.current?.aKey.wasPressedThisFrame == true)

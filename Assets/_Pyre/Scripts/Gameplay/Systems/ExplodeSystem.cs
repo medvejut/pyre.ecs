@@ -1,4 +1,4 @@
-﻿using Pyre.Animations.Components;
+﻿using Pyre.Animations;
 using Pyre.Audio.Components;
 using Pyre.Gameplay.Components;
 using Unity.Burst;
@@ -47,8 +47,15 @@ namespace Pyre.Gameplay.Systems
                         .Add(new PlayAudioSourceEvent { AudioSourceEntity = explosive.ValueRO.TickAudioSourceEntity });
                 }
 
-                SystemAPI.GetSingletonBuffer<PlayAnimationEvent>()
-                    .Add(new PlayAnimationEvent { Target = entity, Duration = delay });
+                if (explosive.ValueRO.PlayWarningPulse)
+                {
+                    AnimationPlayer.Play(ecb, entity, delay, explosive.ValueRO.WarningPulse);
+                }
+
+                if (explosive.ValueRO.PlayWarningBlink)
+                {
+                    AnimationPlayer.Play(ecb, entity, delay, explosive.ValueRO.WarningBlink);
+                }
             }
         }
 
