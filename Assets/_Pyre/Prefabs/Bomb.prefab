@@ -402,6 +402,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.ExplosiveAuthoring
   ExplodeOnStartBurn: 1
   Delay: 3
+  WarningPulse: {fileID: 11400000, guid: 5088ed4e72f36c84195d0b9b4e5163f3, type: 2}
+  WarningBlink: {fileID: 11400000, guid: 905d76795c6e05e4b8b70996a915e9cf, type: 2}
   ExplosionRadius: 12
   ExplosionImpulse: 26
   ExplosionOffset:
@@ -449,8 +451,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e14172e0c435edc45ba1a735346e5534, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.PulseAnimationSourceAuthoring
-  Config: {fileID: 11400000, guid: 5088ed4e72f36c84195d0b9b4e5163f3, type: 2}
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Animations.Components.PulseAnimationTargetAuthoring
 --- !u!114 &7507010071661672789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,7 +463,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6b4824190f71e840a74946902d004c2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.BlinkAnimationSourceAuthoring
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Animations.Components.BlinkAnimationTargetAuthoring
   Config: {fileID: 11400000, guid: 905d76795c6e05e4b8b70996a915e9cf, type: 2}
 --- !u!4 &5392272203115144267 stripped
 Transform:

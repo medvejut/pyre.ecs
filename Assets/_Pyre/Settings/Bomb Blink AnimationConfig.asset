@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7eb1da9302a5bb44583d8f1c345afd71, type: 3}
   m_Name: Bomb Blink AnimationConfig
-  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Settings.BlinkAnimationConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Animations.Settings.BlinkAnimationConfig
   initialColor: {r: 1, g: 1, b: 1, a: 0}
   startColor: {r: 1, g: 1, b: 1, a: 1}
   endColor: {r: 1, g: 0, b: 0, a: 1}
@@ -19,4 +19,3 @@ MonoBehaviour:
   maxOpacity: 1
   baseFrequency: 1
   maxFrequency: 6
-  resetOnFinish: 1

@@ -1,4 +1,5 @@
-﻿using Pyre.Audio;
+﻿using Pyre.Animations.Components;
+using Pyre.Audio;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -9,6 +10,12 @@ namespace Pyre.Gameplay.Components
     {
         public bool ExplodeOnStartBurn;
         public float Delay;
+
+        // Warning animations, played on this entity for the whole of Delay.
+        public bool PlayWarningPulse;
+        public PulseAnimation WarningPulse;
+        public bool PlayWarningBlink;
+        public BlinkAnimation WarningBlink;
 
         public float ExplosionRadius;
         public float ExplosionImpulse;
