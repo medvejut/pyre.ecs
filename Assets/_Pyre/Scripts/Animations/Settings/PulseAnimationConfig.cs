@@ -8,6 +8,7 @@ namespace Pyre.Animations.Settings
     {
         public float minScale = 0.9f;
         public float maxScale = 1.1f;
+
         public float baseFrequency = 1f;
         public float maxFrequency = 4f;
 
@@ -16,7 +17,7 @@ namespace Pyre.Animations.Settings
             MinScale = minScale,
             MaxScale = maxScale,
             BaseFrequency = baseFrequency,
-            MaxFrequency = maxFrequency,
+            MaxFrequency = maxFrequency
         };
     }
 }

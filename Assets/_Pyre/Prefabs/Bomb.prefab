@@ -464,7 +464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b4824190f71e840a74946902d004c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Animations.Components.BlinkAnimationTargetAuthoring
-  Config: {fileID: 11400000, guid: 905d76795c6e05e4b8b70996a915e9cf, type: 2}
+  initialColor: {r: 1, g: 1, b: 1, a: 0}
 --- !u!4 &5392272203115144267 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}

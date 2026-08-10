@@ -11,7 +11,6 @@ namespace Pyre.Gameplay.Components
         public bool ExplodeOnStartBurn = true;
         public float Delay = 3f;
         [Space]
-        [Tooltip("Played on this object for the whole of Delay. Leave empty to play nothing.")]
         public PulseAnimationConfig WarningPulse;
         public BlinkAnimationConfig WarningBlink;
         [Space]
@@ -41,6 +40,7 @@ namespace Pyre.Gameplay.Components
             {
                 DependsOn(authoring.WarningPulse);
                 DependsOn(authoring.WarningBlink);
+                DependsOn(authoring.ExplosionSound);
 
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
                 AddComponent(entity, new Explosive

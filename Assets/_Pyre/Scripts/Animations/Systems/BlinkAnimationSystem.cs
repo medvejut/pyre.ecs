@@ -33,8 +33,6 @@ namespace Pyre.Animations.Systems
 
             var deltaTime = SystemAPI.Time.DeltaTime;
 
-            // Finished instances first, so restoring the rest color can never clobber
-            // a sibling animation that is still running on the same target.
             foreach (var (instance, entity) in
                      SystemAPI.Query<RefRO<AnimationInstance>>()
                          .WithAll<BlinkAnimation>()
@@ -82,7 +80,6 @@ namespace Pyre.Animations.Systems
             var elapsed = instance.Elapsed;
             var normalizedProgress = elapsed / instance.Duration;
 
-            // Frequency chirp: sweeps BaseFrequency -> MaxFrequency across the duration.
             var f0 = blink.BaseFrequency;
             var f1 = blink.MaxFrequency;
             var phase = f0 * elapsed + 0.5f * (f1 - f0) * elapsed * elapsed / instance.Duration;

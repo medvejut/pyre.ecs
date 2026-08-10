@@ -11,7 +11,6 @@ namespace Pyre.Gameplay.Components
         public bool ExplodeOnStartBurn;
         public float Delay;
 
-        // Warning animations, played on this entity for the whole of Delay.
         public bool PlayWarningPulse;
         public PulseAnimation WarningPulse;
         public bool PlayWarningBlink;

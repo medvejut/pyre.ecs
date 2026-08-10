@@ -4,8 +4,6 @@ using Unity.Entities;
 
 namespace Pyre.Animations.Systems
 {
-    // Instances outlive their target when it is destroyed mid-animation, so reap them
-    // before the channel systems try to write through a dangling Target.
     [UpdateInGroup(typeof(AnimationSystemGroup), OrderFirst = true)]
     public partial struct AnimationInstanceCleanupSystem : ISystem
     {

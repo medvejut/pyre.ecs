@@ -110,9 +110,6 @@ namespace Pyre.Debugging
 
             if (Keyboard.current?.eKey.wasPressedThisFrame == true)
             {
-                // Play the same warning animations an explosive plays for real, so the
-                // hotkey exercises the real path. Pressing it again stacks another
-                // instance rather than restarting the running one.
                 foreach (var (explosive, entity) in
                          SystemAPI.Query<RefRO<Explosive>>().WithEntityAccess())
                 {
