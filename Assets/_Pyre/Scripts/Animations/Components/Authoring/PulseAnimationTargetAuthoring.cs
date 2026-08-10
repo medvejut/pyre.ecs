@@ -11,7 +11,8 @@ namespace Pyre.Animations.Components
             {
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
 
-                var restScale = authoring.transform.localScale.x;
+                // Through the baker, not authoring.transform: that is what records the dependency on the scale.
+                var restScale = GetComponent<Transform>().localScale.x;
                 AddComponent(entity, new AnimationRestScale { Value = restScale });
             }
         }

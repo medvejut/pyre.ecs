@@ -15,13 +15,19 @@ namespace Pyre.Player.Components
             public override void Bake(PlayerSkeletonAuthoring authoring)
             {
                 var skeleton = GetComponentInChildren<SkeletonAuthoring>();
-                if (skeleton == null || skeleton.ClipSet == null)
+                if (skeleton == null)
                 {
-                    Debug.LogError($"[{authoring.name}] has no SkeletonAuthoring with a clip set among its children.", authoring);
+                    Debug.LogError($"[{authoring.name}] has no SkeletonAuthoring among its children.", authoring);
                     return;
                 }
 
                 DependsOn(skeleton.ClipSet);
+
+                if (skeleton.ClipSet == null)
+                {
+                    Debug.LogError($"[{authoring.name}] has a SkeletonAuthoring with no clip set.", authoring);
+                    return;
+                }
 
                 var entity = GetEntity(TransformUsageFlags.None);
 

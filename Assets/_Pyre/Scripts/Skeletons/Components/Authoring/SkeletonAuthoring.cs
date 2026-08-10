@@ -124,6 +124,10 @@ namespace Pyre.Skeletons.Components
                     return;
                 }
 
+                // The renderer itself is tracked by GetComponentInChildren, but the bind poses live in the mesh
+                // asset — without this a re-import of the model leaves stale BindPose values behind.
+                DependsOn(skinnedMesh.sharedMesh);
+
                 var skinBones = skinnedMesh.bones;
                 var bindPoses = skinnedMesh.sharedMesh.bindposes;
 
