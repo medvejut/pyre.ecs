@@ -6,10 +6,11 @@ namespace Pyre.UI
     public class ProgressIconView : MonoBehaviour
     {
         [SerializeField] private Image fill;
+        [SerializeField] private GameObject visibilityTarget;
 
         public void SetVisible(bool visible)
         {
-            fill.enabled = visible;
+            visibilityTarget.SetActive(visible);
         }
 
         public void SetProgress(float value)
