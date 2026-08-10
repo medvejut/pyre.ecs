@@ -256,6 +256,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7507010071661672789}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7716187114258313750}
   m_SourcePrefab: {fileID: 100100000, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
 --- !u!1 &4728465506310586097 stripped
 GameObject:
@@ -296,7 +299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Authoring.IgnitableAuthoring
   burningRadius: 0
-  ignitionTime: 0.1
+  ignitionTime: 0.01
   coolingRate: 0.5
   startBurningSound: {fileID: 0}
   loopSound: {fileID: 0}
@@ -365,6 +368,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Animations.Components.BlinkAnimationTargetAuthoring
   initialColor: {r: 1, g: 1, b: 1, a: 0}
+--- !u!114 &7716187114258313750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4728465506310586097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85ce7d73f98a0de4b93ab4b776cdea11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Gameplay.Components.IconAnchorAuthoring
+  offset: {x: -1.8, y: 2.1, z: -0.5}
 --- !u!4 &5392272203115144267 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}

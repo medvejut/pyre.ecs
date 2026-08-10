@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 903190941697269693}
   - component: {fileID: 4844146751082749673}
   - component: {fileID: 3203570870722522276}
+  - component: {fileID: 4781003114085467143}
   m_Layer: 0
   m_Name: Hero
   m_TagString: Untagged
@@ -163,6 +164,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Player.Components.PlayerSkeletonAuthoring
   IdleClipName: idle
   WalkClipName: walk
+--- !u!114 &4781003114085467143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3923431594767700871}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85ce7d73f98a0de4b93ab4b776cdea11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.Gameplay.Components.IconAnchorAuthoring
+  offset: {x: -3, y: 5, z: -1.5}
 --- !u!1 &7377224460367004496
 GameObject:
   m_ObjectHideFlags: 0

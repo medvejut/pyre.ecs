@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using Pyre.Gameplay.Components;
+using Pyre.UI.Components;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Transforms;
@@ -12,11 +12,12 @@ namespace Pyre.UI
     {
         [Header("Ignition Progress")]
         [SerializeField] private ProgressIconView ignitionIconPrefab;
-        [SerializeField] private Vector3 ignitionOffset = new(0f, 2.25f, 0f);
 
         [Header("Explode Timer")]
         [SerializeField] private ProgressIconView explodeIconPrefab;
-        [SerializeField] private Vector3 explodeOffset = new(0f, 3f, 0f);
+
+        [Header("Placement")]
+        [SerializeField] private Vector3 fallbackOffset = new(0f, 2.25f, 0f);
 
         private readonly Dictionary<Entity, ProgressIconView> _ignitionIcons = new();
         private readonly Dictionary<Entity, ProgressIconView> _explodeIcons = new();
@@ -69,7 +70,7 @@ namespace Pyre.UI
 
                 icon.SetVisible(progress.Elapsed > 0f && !_entityManager.HasComponent<Burning>(entity));
                 icon.SetProgress(ignitable.IgnitionTime > 0f ? progress.Elapsed / ignitable.IgnitionTime : 0f);
-                icon.Place((Vector3)localToWorld.Position + ignitionOffset, cameraRotation);
+                icon.Place((Vector3)localToWorld.Position + GetOffset(entity), cameraRotation);
             }
 
             RemoveStaleIcons(_ignitionIcons, entities);
@@ -98,10 +99,17 @@ namespace Pyre.UI
                     icon.SetProgress(timer.TimeRemaining / explosive.Delay);
                 }
 
-                icon.Place((Vector3)localToWorld.Position + explodeOffset, cameraRotation);
+                icon.Place((Vector3)localToWorld.Position + GetOffset(entity), cameraRotation);
             }
 
             RemoveStaleIcons(_explodeIcons, entities);
+        }
+
+        private Vector3 GetOffset(Entity entity)
+        {
+            return _entityManager.HasComponent<IconAnchor>(entity)
+                ? _entityManager.GetComponentData<IconAnchor>(entity).Offset
+                : fallbackOffset;
         }
 
         private ProgressIconView GetOrCreateIcon(Dictionary<Entity, ProgressIconView> icons, Entity entity, ProgressIconView prefab)
