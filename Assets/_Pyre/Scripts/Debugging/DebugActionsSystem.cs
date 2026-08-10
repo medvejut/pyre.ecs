@@ -1,4 +1,4 @@
-﻿using Pyre.Animations.Components;
+﻿using Pyre.Animations;
 using Pyre.Cameras.Components;
 using Pyre.Gameplay.Components;
 using Pyre.Player.Components;
@@ -110,19 +110,19 @@ namespace Pyre.Debugging
 
             if (Keyboard.current?.eKey.wasPressedThisFrame == true)
             {
-                var playAnimationEventBuffer = SystemAPI.GetSingletonBuffer<PlayAnimationEvent>();
-
-                var animatableQuery = SystemAPI.QueryBuilder()
-                    .WithAny<PulseAnimationSource, BlinkAnimationSource>()
-                    .Build();
-
-                var animatableEntities = animatableQuery.ToEntityArray(Allocator.Temp);
-                foreach (var entity in animatableEntities)
+                foreach (var (warning, entity) in
+                         SystemAPI.Query<RefRO<ExplosiveWarning>>().WithEntityAccess())
                 {
-                    playAnimationEventBuffer.Add(new PlayAnimationEvent { Target = entity, Duration = DebugAnimationDuration });
-                }
+                    if (warning.ValueRO.PlayPulse)
+                    {
+                        AnimationPlayer.Play(ecb, entity, DebugAnimationDuration, warning.ValueRO.Pulse);
+                    }
 
-                animatableEntities.Dispose();
+                    if (warning.ValueRO.PlayBlink)
+                    {
+                        AnimationPlayer.Play(ecb, entity, DebugAnimationDuration, warning.ValueRO.Blink);
+                    }
+                }
             }
 
             if (Keyboard.current?.aKey.wasPressedThisFrame == true)

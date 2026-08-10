@@ -1,7 +1,4 @@
-﻿using Pyre.Audio;
 using Unity.Entities;
-using Unity.Mathematics;
-using UnityEngine;
 
 namespace Pyre.Gameplay.Components
 {
@@ -9,17 +6,5 @@ namespace Pyre.Gameplay.Components
     {
         public bool ExplodeOnStartBurn;
         public float Delay;
-
-        public float ExplosionRadius;
-        public float ExplosionImpulse;
-        public float3 ExplosionOffset;
-
-        public float CustomExplosionAngularImpulseMultiplier;
-        public uint CustomExplosionAngularImpulseRandomSeed;
-
-        public UnityObjectRef<SoundClipSet> ExplosionSound;
-        public Entity TickAudioSourceEntity;
-
-        public UnityObjectRef<ParticleSystem> ExplosionVfx;
     }
 }

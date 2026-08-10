@@ -11,10 +11,5 @@ namespace Pyre.Animations.Components
         public float MaxOpacity;
         public float BaseFrequency;
         public float MaxFrequency;
-        public float TotalDuration;
-        public float ElapsedTime;
-
-        public bool ResetOnFinish;
-        public float4 ResetColor;
     }
 }
