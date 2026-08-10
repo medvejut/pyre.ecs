@@ -124,6 +124,8 @@ namespace Pyre.Skeletons.Components
                     return;
                 }
 
+                DependsOn(skinnedMesh.sharedMesh);
+
                 var skinBones = skinnedMesh.bones;
                 var bindPoses = skinnedMesh.sharedMesh.bindposes;
 

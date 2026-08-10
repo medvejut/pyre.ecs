@@ -42,7 +42,6 @@ namespace Pyre.Gameplay.Components
             {
                 DependsOn(authoring.WarningPulse);
                 DependsOn(authoring.WarningBlink);
-                DependsOn(authoring.ExplosionSound);
 
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
 
