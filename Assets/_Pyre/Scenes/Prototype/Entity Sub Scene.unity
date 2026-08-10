@@ -191,6 +191,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3401653903027313230, guid: 4a52592db286e0a4abfcbf43b9b7e93c, type: 3}
   m_PrefabInstance: {fileID: 2060748016}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &245070112 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 304755986187368412, guid: e8bc13f33b0cac7448caa2c359741cd3, type: 3}
+  m_PrefabInstance: {fileID: 2093965197}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &245070120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245070112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85ce7d73f98a0de4b93ab4b776cdea11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Pyre.UI.Components.DebugIconSettingsAuthoring
+  isEnabled: 0
+  offset: {x: 0, y: 2.25, z: 0}
 --- !u!1001 &345970426
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1033,7 +1052,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 304755986187368412, guid: e8bc13f33b0cac7448caa2c359741cd3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 245070120}
   m_SourcePrefab: {fileID: 100100000, guid: e8bc13f33b0cac7448caa2c359741cd3, type: 3}
 --- !u!1001 &1504837548066551132
 PrefabInstance:
