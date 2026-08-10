@@ -8,19 +8,19 @@ using UnityEngine;
 
 namespace Pyre.UI
 {
-    public class ComponentIcons : MonoBehaviour
+    public class DebugIconsUI : MonoBehaviour
     {
         [Header("Ignition Progress")]
-        [SerializeField] private ProgressIconView ignitionIconPrefab;
+        [SerializeField] private DebugIconView ignitionIconPrefab;
 
         [Header("Explode Timer")]
-        [SerializeField] private ProgressIconView explodeIconPrefab;
+        [SerializeField] private DebugIconView explodeIconPrefab;
 
         [Header("Placement")]
         [SerializeField] private Vector3 fallbackOffset = new(0f, 2.25f, 0f);
 
-        private readonly Dictionary<Entity, ProgressIconView> _ignitionIcons = new();
-        private readonly Dictionary<Entity, ProgressIconView> _explodeIcons = new();
+        private readonly Dictionary<Entity, DebugIconView> _ignitionIcons = new();
+        private readonly Dictionary<Entity, DebugIconView> _explodeIcons = new();
         private readonly List<Entity> _staleEntities = new();
 
         private Camera _camera;
@@ -66,11 +66,13 @@ namespace Pyre.UI
                 var progress = _entityManager.GetComponentData<IgnitionProgress>(entity);
                 var localToWorld = _entityManager.GetComponentData<LocalToWorld>(entity);
 
+                var (isEnabled, offset) = GetIconSettings(entity);
+
                 var icon = GetOrCreateIcon(_ignitionIcons, entity, ignitionIconPrefab);
 
-                icon.SetVisible(progress.Elapsed > 0f && !_entityManager.HasComponent<Burning>(entity));
+                icon.SetVisible(isEnabled && progress.Elapsed > 0f && !_entityManager.HasComponent<Burning>(entity));
                 icon.SetProgress(ignitable.IgnitionTime > 0f ? progress.Elapsed / ignitable.IgnitionTime : 0f);
-                icon.Place((Vector3)localToWorld.Position + GetOffset(entity), cameraRotation);
+                icon.Place((Vector3)localToWorld.Position + offset, cameraRotation);
             }
 
             RemoveStaleIcons(_ignitionIcons, entities);
@@ -89,9 +91,11 @@ namespace Pyre.UI
                 var localToWorld = _entityManager.GetComponentData<LocalToWorld>(entity);
 
                 var isCountingDown = _entityManager.HasComponent<ExplodeTimer>(entity);
+                var (isEnabled, offset) = GetIconSettings(entity);
+
                 var icon = GetOrCreateIcon(_explodeIcons, entity, explodeIconPrefab);
 
-                icon.SetVisible(isCountingDown);
+                icon.SetVisible(isEnabled && isCountingDown);
 
                 if (isCountingDown && explosive.Delay > 0f)
                 {
@@ -99,20 +103,24 @@ namespace Pyre.UI
                     icon.SetProgress(timer.TimeRemaining / explosive.Delay);
                 }
 
-                icon.Place((Vector3)localToWorld.Position + GetOffset(entity), cameraRotation);
+                icon.Place((Vector3)localToWorld.Position + offset, cameraRotation);
             }
 
             RemoveStaleIcons(_explodeIcons, entities);
         }
 
-        private Vector3 GetOffset(Entity entity)
+        private (bool isEnabled, Vector3 offset) GetIconSettings(Entity entity)
         {
-            return _entityManager.HasComponent<IconAnchor>(entity)
-                ? _entityManager.GetComponentData<IconAnchor>(entity).Offset
-                : fallbackOffset;
+            if (_entityManager.HasComponent<DebugIconSettings>(entity))
+            {
+                var settings = _entityManager.GetComponentData<DebugIconSettings>(entity);
+                return (settings.Enabled, settings.Offset);
+            }
+
+            return (isEnabled: true, fallbackOffset);
         }
 
-        private ProgressIconView GetOrCreateIcon(Dictionary<Entity, ProgressIconView> icons, Entity entity, ProgressIconView prefab)
+        private DebugIconView GetOrCreateIcon(Dictionary<Entity, DebugIconView> icons, Entity entity, DebugIconView prefab)
         {
             if (icons.TryGetValue(entity, out var icon))
             {
@@ -125,7 +133,7 @@ namespace Pyre.UI
             return icon;
         }
 
-        private void RemoveStaleIcons(Dictionary<Entity, ProgressIconView> icons, NativeArray<Entity> liveEntities)
+        private void RemoveStaleIcons(Dictionary<Entity, DebugIconView> icons, NativeArray<Entity> liveEntities)
         {
             _staleEntities.Clear();
             foreach (var pair in icons)

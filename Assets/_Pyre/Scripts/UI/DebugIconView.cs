@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace Pyre.UI
 {
-    public class ProgressIconView : MonoBehaviour
+    public class DebugIconView : MonoBehaviour
     {
         [SerializeField] private Image fill;
         [SerializeField] private GameObject visibilityTarget;

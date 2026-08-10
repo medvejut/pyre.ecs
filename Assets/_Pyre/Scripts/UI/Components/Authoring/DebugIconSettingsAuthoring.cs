@@ -3,16 +3,17 @@ using UnityEngine;
 
 namespace Pyre.UI.Components
 {
-    public class IconAnchorAuthoring : MonoBehaviour
+    public class DebugIconSettingsAuthoring : MonoBehaviour
     {
+        [SerializeField] private bool isEnabled = true;
         [SerializeField] private Vector3 offset = new(0f, 2.25f, 0f);
 
-        public class IconAnchorBaker : Baker<IconAnchorAuthoring>
+        public class DebugIconSettingsBaker : Baker<DebugIconSettingsAuthoring>
         {
-            public override void Bake(IconAnchorAuthoring authoring)
+            public override void Bake(DebugIconSettingsAuthoring authoring)
             {
                 var entity = GetEntity(TransformUsageFlags.None);
-                AddComponent(entity, new IconAnchor { Offset = authoring.offset });
+                AddComponent(entity, new DebugIconSettings { Enabled = authoring.isEnabled, Offset = authoring.offset });
             }
         }
 
