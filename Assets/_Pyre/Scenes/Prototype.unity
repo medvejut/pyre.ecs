@@ -639,7 +639,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.UI.ComponentIcons
   ignitionIconPrefab: {fileID: 5390438230451609922, guid: 1860f3265e87ab64b8206c95ed4b5bdd, type: 3}
   explodeIconPrefab: {fileID: 4166887089682295787, guid: 4c89102e0a84f3a49b01cad21951de61, type: 3}
-  fallbackOffset: {x: -0.5, y: 2, z: -0.5}
+  fallbackOffset: {x: -0.75, y: 2, z: -0.75}
 --- !u!1 &1567950653
 GameObject:
   m_ObjectHideFlags: 0
