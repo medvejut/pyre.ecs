@@ -13,7 +13,6 @@ namespace Pyre.Gameplay.Components
         public float Delay = 3f;
 
         [Header("Warning")]
-        [Tooltip("Played on this object for the whole of Delay. Leave empty to play nothing.")]
         public PulseAnimationConfig WarningPulse;
         public BlinkAnimationConfig WarningBlink;
         public AudioSource TickAudioSource;
