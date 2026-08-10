@@ -110,17 +110,17 @@ namespace Pyre.Debugging
 
             if (Keyboard.current?.eKey.wasPressedThisFrame == true)
             {
-                foreach (var (explosive, entity) in
-                         SystemAPI.Query<RefRO<Explosive>>().WithEntityAccess())
+                foreach (var (warning, entity) in
+                         SystemAPI.Query<RefRO<ExplosiveWarning>>().WithEntityAccess())
                 {
-                    if (explosive.ValueRO.PlayWarningPulse)
+                    if (warning.ValueRO.PlayPulse)
                     {
-                        AnimationPlayer.Play(ecb, entity, DebugAnimationDuration, explosive.ValueRO.WarningPulse);
+                        AnimationPlayer.Play(ecb, entity, DebugAnimationDuration, warning.ValueRO.Pulse);
                     }
 
-                    if (explosive.ValueRO.PlayWarningBlink)
+                    if (warning.ValueRO.PlayBlink)
                     {
-                        AnimationPlayer.Play(ecb, entity, DebugAnimationDuration, explosive.ValueRO.WarningBlink);
+                        AnimationPlayer.Play(ecb, entity, DebugAnimationDuration, warning.ValueRO.Blink);
                     }
                 }
             }

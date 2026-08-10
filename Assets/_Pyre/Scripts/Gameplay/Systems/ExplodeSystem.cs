@@ -1,4 +1,4 @@
-﻿using Pyre.Animations;
+using Pyre.Animations;
 using Pyre.Audio.Components;
 using Pyre.Gameplay.Components;
 using Unity.Burst;
@@ -11,15 +11,20 @@ namespace Pyre.Gameplay.Systems
 {
     public partial struct ExplodeSystem : ISystem
     {
+        private ComponentLookup<ExplosiveWarning> _warningLookup;
+
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
+            _warningLookup = state.GetComponentLookup<ExplosiveWarning>(isReadOnly: true);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+            _warningLookup.Update(ref state);
+
             var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>()
                 .CreateCommandBuffer(state.WorldUnmanaged);
 
@@ -41,21 +46,7 @@ namespace Pyre.Gameplay.Systems
                 var delay = explosive.ValueRO.Delay;
                 ecb.AddComponent(entity, new ExplodeTimer { TimeRemaining = delay });
 
-                if (explosive.ValueRO.TickAudioSourceEntity != Entity.Null)
-                {
-                    SystemAPI.GetSingletonBuffer<PlayAudioSourceEvent>()
-                        .Add(new PlayAudioSourceEvent { AudioSourceEntity = explosive.ValueRO.TickAudioSourceEntity });
-                }
-
-                if (explosive.ValueRO.PlayWarningPulse)
-                {
-                    AnimationPlayer.Play(ecb, entity, delay, explosive.ValueRO.WarningPulse);
-                }
-
-                if (explosive.ValueRO.PlayWarningBlink)
-                {
-                    AnimationPlayer.Play(ecb, entity, delay, explosive.ValueRO.WarningBlink);
-                }
+                StartWarning(entity, delay, ecb);
             }
         }
 
@@ -63,42 +54,72 @@ namespace Pyre.Gameplay.Systems
         {
             var deltaTime = SystemAPI.Time.DeltaTime;
 
-            foreach (var (explodeTimer, explosive, ltw, entity) in
-                     SystemAPI.Query<RefRW<ExplodeTimer>, RefRO<Explosive>, RefRO<LocalToWorld>>()
+            foreach (var (explodeTimer, charge, ltw, entity) in
+                     SystemAPI.Query<RefRW<ExplodeTimer>, RefRO<ExplosiveCharge>, RefRO<LocalToWorld>>()
                          .WithEntityAccess())
             {
                 explodeTimer.ValueRW.TimeRemaining -= deltaTime;
 
-                if (explodeTimer.ValueRO.TimeRemaining <= 0f)
+                if (explodeTimer.ValueRO.TimeRemaining > 0f)
+                    continue;
+
+                var explosionEntity = ecb.CreateEntity();
+
+                ecb.AddComponent(explosionEntity, new Explosion
                 {
-                    var explosionEntity = ecb.CreateEntity();
+                    Position = ltw.ValueRO.Position + charge.ValueRO.Offset,
+                    Radius = charge.ValueRO.Radius,
+                    Impulse = charge.ValueRO.Impulse,
+                    AngularImpulse = CalculateAngularImpulse(charge.ValueRO),
+                    Sound = charge.ValueRO.Sound,
+                    Vfx = charge.ValueRO.Vfx
+                });
 
-                    ecb.AddComponent(explosionEntity, new Explosion
-                    {
-                        Position = ltw.ValueRO.Position + explosive.ValueRO.ExplosionOffset,
-                        Radius = explosive.ValueRO.ExplosionRadius,
-                        Impulse = explosive.ValueRO.ExplosionImpulse,
-                        AngularImpulse = CalculateExplosionAngularImpulse(explosive),
-                        Sound = explosive.ValueRO.ExplosionSound,
-                        Vfx = explosive.ValueRO.ExplosionVfx
-                    });
+                ecb.RemoveComponent<ExplodeTimer>(entity);
+                ecb.RemoveComponent<Explosive>(entity);
 
-                    ecb.RemoveComponent<ExplodeTimer>(entity);
-                    ecb.RemoveComponent<Explosive>(entity);
-
-                    if (explosive.ValueRO.TickAudioSourceEntity != Entity.Null)
-                    {
-                        SystemAPI.GetSingletonBuffer<StopAudioSourceEvent>()
-                            .Add(new StopAudioSourceEvent { AudioSourceEntity = explosive.ValueRO.TickAudioSourceEntity });
-                    }
-                }
+                StopWarning(entity);
             }
         }
 
-        private static float3 CalculateExplosionAngularImpulse(RefRO<Explosive> explosive)
+        private void StartWarning(Entity entity, float delay, EntityCommandBuffer ecb)
         {
-            var random = Random.CreateFromIndex(explosive.ValueRO.CustomExplosionAngularImpulseRandomSeed);
-            return random.NextFloat3Direction() * explosive.ValueRO.CustomExplosionAngularImpulseMultiplier;
+            if (!_warningLookup.TryGetComponent(entity, out var warning))
+                return;
+
+            if (warning.TickAudioSourceEntity != Entity.Null)
+            {
+                SystemAPI.GetSingletonBuffer<PlayAudioSourceEvent>()
+                    .Add(new PlayAudioSourceEvent { AudioSourceEntity = warning.TickAudioSourceEntity });
+            }
+
+            if (warning.PlayPulse)
+            {
+                AnimationPlayer.Play(ecb, entity, delay, warning.Pulse);
+            }
+
+            if (warning.PlayBlink)
+            {
+                AnimationPlayer.Play(ecb, entity, delay, warning.Blink);
+            }
+        }
+
+        private void StopWarning(Entity entity)
+        {
+            if (!_warningLookup.TryGetComponent(entity, out var warning))
+                return;
+
+            if (warning.TickAudioSourceEntity == Entity.Null)
+                return;
+
+            SystemAPI.GetSingletonBuffer<StopAudioSourceEvent>()
+                .Add(new StopAudioSourceEvent { AudioSourceEntity = warning.TickAudioSourceEntity });
+        }
+
+        private static float3 CalculateAngularImpulse(in ExplosiveCharge charge)
+        {
+            var random = Random.CreateFromIndex(charge.AngularImpulseSeed);
+            return random.NextFloat3Direction() * charge.AngularImpulseMultiplier;
         }
     }
 }

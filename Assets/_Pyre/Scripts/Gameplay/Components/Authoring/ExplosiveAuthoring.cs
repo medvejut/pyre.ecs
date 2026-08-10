@@ -1,4 +1,4 @@
-﻿using Pyre.Animations.Settings;
+using Pyre.Animations.Settings;
 using Pyre.Audio;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -8,12 +8,17 @@ namespace Pyre.Gameplay.Components
 {
     public class ExplosiveAuthoring : MonoBehaviour
     {
+        [Header("Fuse")]
         public bool ExplodeOnStartBurn = true;
         public float Delay = 3f;
-        [Space]
+
+        [Header("Warning")]
+        [Tooltip("Played on this object for the whole of Delay. Leave empty to play nothing.")]
         public PulseAnimationConfig WarningPulse;
         public BlinkAnimationConfig WarningBlink;
-        [Space]
+        public AudioSource TickAudioSource;
+
+        [Header("Charge")]
         public float ExplosionRadius = 3f;
         public float ExplosionImpulse = 10f;
         public float3 ExplosionOffset;
@@ -22,8 +27,6 @@ namespace Pyre.Gameplay.Components
         public uint CustomExplosionAngularImpulseRandomSeed = 2;
         [Space]
         public SoundClipSet ExplosionSound;
-        public AudioSource TickAudioSource;
-        [Space]
         public ParticleSystem ExplosionVfx;
 
         private void OnDrawGizmosSelected()
@@ -43,28 +46,49 @@ namespace Pyre.Gameplay.Components
                 DependsOn(authoring.ExplosionSound);
 
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
+
                 AddComponent(entity, new Explosive
                 {
                     ExplodeOnStartBurn = authoring.ExplodeOnStartBurn,
                     Delay = authoring.Delay,
+                });
 
-                    PlayWarningPulse = authoring.WarningPulse != null,
-                    WarningPulse = authoring.WarningPulse != null ? authoring.WarningPulse.ToAnimation() : default,
-                    PlayWarningBlink = authoring.WarningBlink != null,
-                    WarningBlink = authoring.WarningBlink != null ? authoring.WarningBlink.ToAnimation() : default,
+                AddComponent(entity, new ExplosiveCharge
+                {
+                    Offset = authoring.ExplosionOffset,
+                    Radius = authoring.ExplosionRadius,
+                    Impulse = authoring.ExplosionImpulse,
 
-                    ExplosionRadius = authoring.ExplosionRadius,
+                    AngularImpulseMultiplier = authoring.CustomExplosionAngularImpulseMultiplier,
+                    AngularImpulseSeed = authoring.CustomExplosionAngularImpulseRandomSeed,
 
-                    CustomExplosionAngularImpulseMultiplier = authoring.CustomExplosionAngularImpulseMultiplier,
-                    CustomExplosionAngularImpulseRandomSeed = authoring.CustomExplosionAngularImpulseRandomSeed,
+                    Sound = authoring.ExplosionSound,
+                    Vfx = authoring.ExplosionVfx,
+                });
 
-                    ExplosionImpulse = authoring.ExplosionImpulse,
-                    ExplosionOffset = authoring.ExplosionOffset,
+                BakeWarning(authoring, entity);
+            }
 
-                    ExplosionSound = authoring.ExplosionSound,
-                    TickAudioSourceEntity = authoring.TickAudioSource ? GetEntity(authoring.TickAudioSource, TransformUsageFlags.Dynamic) : Entity.Null,
+            private void BakeWarning(ExplosiveAuthoring authoring, Entity entity)
+            {
+                var hasWarning = authoring.WarningPulse != null
+                                 || authoring.WarningBlink != null
+                                 || authoring.TickAudioSource != null;
 
-                    ExplosionVfx = authoring.ExplosionVfx
+                if (!hasWarning)
+                    return;
+
+                AddComponent(entity, new ExplosiveWarning
+                {
+                    TickAudioSourceEntity = authoring.TickAudioSource
+                        ? GetEntity(authoring.TickAudioSource, TransformUsageFlags.Dynamic)
+                        : Entity.Null,
+
+                    PlayPulse = authoring.WarningPulse != null,
+                    Pulse = authoring.WarningPulse != null ? authoring.WarningPulse.ToAnimation() : default,
+
+                    PlayBlink = authoring.WarningBlink != null,
+                    Blink = authoring.WarningBlink != null ? authoring.WarningBlink.ToAnimation() : default,
                 });
             }
         }
