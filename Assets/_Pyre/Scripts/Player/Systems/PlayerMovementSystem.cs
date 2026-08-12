@@ -47,7 +47,9 @@ namespace Pyre.Player.Systems
                     knockbackAngular = knockback.Angular;
                 }
 
-                velocity.ValueRW.Linear = movementVelocity + knockbackVelocity;
+                var linear = movementVelocity + knockbackVelocity;
+                linear.y = velocity.ValueRO.Linear.y;
+                velocity.ValueRW.Linear = linear;
                 velocity.ValueRW.Angular = float3.zero;
 
                 var baseRotation = localTransform.ValueRO.Rotation;
