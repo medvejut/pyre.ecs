@@ -176,6 +176,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ce7d73f98a0de4b93ab4b776cdea11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Gameplay.Components.IconAnchorAuthoring
+  isEnabled: 1
   offset: {x: -3, y: 5, z: -1.5}
 --- !u!1 &7377224460367004496
 GameObject:
@@ -399,15 +400,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: fa4c69675a23d2d4a8d72f89dfd35bbd, type: 3}
       propertyPath: m_LocalScale.x
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fa4c69675a23d2d4a8d72f89dfd35bbd, type: 3}
       propertyPath: m_LocalScale.y
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fa4c69675a23d2d4a8d72f89dfd35bbd, type: 3}
       propertyPath: m_LocalScale.z
-      value: 3
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fa4c69675a23d2d4a8d72f89dfd35bbd, type: 3}
       propertyPath: m_LocalPosition.x
