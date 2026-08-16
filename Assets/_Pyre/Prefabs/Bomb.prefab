@@ -317,7 +317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Components.ExplosiveAuthoring
   ExplodeOnStartBurn: 1
-  Delay: 2.8
+  Delay: 3
   WarningPulse: {fileID: 11400000, guid: 5088ed4e72f36c84195d0b9b4e5163f3, type: 2}
   WarningBlink: {fileID: 11400000, guid: 905d76795c6e05e4b8b70996a915e9cf, type: 2}
   TickAudioSource: {fileID: 0}
@@ -381,7 +381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pyre.Gameplay.Components.IconAnchorAuthoring
   isEnabled: 1
-  offset: {x: -1.8, y: 2.1, z: -0.5}
+  offset: {x: -2.3, y: 2.2, z: -0.5}
 --- !u!4 &5392272203115144267 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 88fed13ff653f324ebc8abc04ab0d644, type: 3}
