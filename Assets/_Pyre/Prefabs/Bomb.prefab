@@ -320,7 +320,7 @@ MonoBehaviour:
   Delay: 3
   WarningPulse: {fileID: 11400000, guid: 5088ed4e72f36c84195d0b9b4e5163f3, type: 2}
   WarningBlink: {fileID: 11400000, guid: 905d76795c6e05e4b8b70996a915e9cf, type: 2}
-  TickAudioSource: {fileID: 0}
+  TickAudioSource: {fileID: 3372427359875174172}
   ExplosionRadius: 8.5
   ExplosionImpulse: 31
   ExplosionOffset:
