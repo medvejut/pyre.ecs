@@ -7,8 +7,6 @@ https://github.com/user-attachments/assets/5b19ca34-6420-41fa-ad0c-9d36d91c147d
 A learning project, built to explore ECS as gameplay architecture rather than as a performance tool. Hence
 no 50,000-cube benchmark — just a couple of dozen dynamic objects and a fire propagation system.
 
----
-
 ## 🎮 What's implemented
 
 **In ECS**
@@ -27,8 +25,6 @@ no 50,000-cube benchmark — just a couple of dozen dynamic objects and a fire p
 buffers and a thin managed bridge drains them once per frame: positional audio one-shots, looping
 `AudioSource`s living on entities, particle spawning, VFX Graph play/stop, camera shake, and a canvas UI
 that reads entity queries to place progress icons. Input System actions arrive the same way, in reverse.
-
----
 
 ## 📁 Structure
 
@@ -59,9 +55,7 @@ Open `Assets/_Pyre/Scenes/Prototype.unity`; gameplay entities live in its `Entit
 
 **Stack:** Unity 6000.5.4f1 (HDRP) · DOTS (Entities 6.5) · Input System · ProBuilder · VFX Graph
 
----
-
-## Advice, if you're starting out
+## 💡 Advice, if you're starting out
 
 **Editor and scenes**
 * **Close the sub-scene to preview particles and VFX in Play Mode.** While it's open for editing they
@@ -85,9 +79,7 @@ Open `Assets/_Pyre/Scenes/Prototype.unity`; gameplay entities live in its `Entit
 * **Read the [official documentation](https://docs.unity3d.com/Packages/com.unity.entities@6.6/index.html).**
   It is genuinely good and was more useful than any secondary source.
 
----
-
-## Credits
+## 🙏 Credits
 
 3D models, textures and icons by [Kenney](https://kenney.nl/) (CC0).  
 Sound effects generated with [ElevenLabs](https://elevenlabs.io/).
